@@ -1,0 +1,11 @@
+Doctor
+Create Case
+Close / Open Case
+
+(Case)
+Patient Name
+Date of Consultaion
+Diagnosis
+Case Type
+Medication - Drugs -Dosage
+Feedback - Date - Data
