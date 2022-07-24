@@ -6,12 +6,21 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { useDispatch } from "react-redux";
 import { LoginIntroImage } from "./LoginIntroImage";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { signInUser } from "../../store/userSlice";
+import { login } from "../../store/authSlice";
 
 const Login = (props) => {
-  const [patient, setpatient] = useState("");
+  const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const dispatch = useDispatch();
+  const handleSignIn = () => {
+    if (email === "") return;
+    if (password === "") return;
+    dispatch(signInUser({ email, password }));
+  };
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -23,8 +32,8 @@ const Login = (props) => {
             <Text style={styles.textlabel}>Email</Text>
             <TextInput
               placeholder="Enter Your Patient ID here"
-              value={patient}
-              onChangeText={(text) => setpatient(text)}
+              value={email}
+              onChangeText={(text) => setemail(text)}
               keyboardType="email-address"
               style={[styles.textinput, { marginLeft: 30 }]}
             />
@@ -41,7 +50,7 @@ const Login = (props) => {
           </View>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => props.navigation.navigate("doctorcontainer")}
+            onPress={() => handleSignIn()}
           >
             <MaterialCommunityIcons
               name="send"
@@ -72,6 +81,7 @@ const Login = (props) => {
                   textDecorationLine: "underline",
                   color: "rgb(29, 35, 102)",
                 }}
+                onPress={() => props.navigation.navigate("caseentery")}
               >
                 here
               </Text>{" "}

@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
@@ -10,18 +9,15 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCykQIHDgqEPbou9ElhoBl75uZYBSNKs7o",
-  authDomain: "crm-epr-enigma.firebaseapp.com",
-  projectId: "crm-epr-enigma",
-  storageBucket: "crm-epr-enigma.appspot.com",
-  messagingSenderId: "342673836653",
-  appId: "1:342673836653:web:764e0686d30b121d12cd64",
-  measurementId: "G-MZ35B83FP9",
+  apiKey: "AIzaSyD-SiuRa6J7wvy4tCVgY353SohayEi6l_I",
+  authDomain: "enigma-4c4b9.firebaseapp.com",
+  projectId: "enigma-4c4b9",
+  storageBucket: "enigma-4c4b9.appspot.com",
+  messagingSenderId: "926017753099",
+  appId: "1:926017753099:web:07f7f1bb7562e670f4b70e",
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 export const auth = getAuth(app);
 export const storage = getStorage(app);

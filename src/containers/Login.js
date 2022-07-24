@@ -6,6 +6,8 @@ import { DoctorHome } from "../components/DoctorHome";
 import { NurseHome } from "../components/NurseHome";
 import { Login } from "../components/Login";
 import { Registeration } from "../components/Registeration";
+import { connect } from "react-redux";
+import { CaseEntery } from "../components/CaseEntery";
 
 const NativeStack = createNativeStackNavigator();
 class LoginContainer extends React.Component {
@@ -23,9 +25,13 @@ class LoginContainer extends React.Component {
           <NativeStack.Screen name="patienthome" component={PatientHome} />
           <NativeStack.Screen name="doctorhome" component={DoctorHome} />
           <NativeStack.Screen name="nursehome" component={NurseHome} />
+          <NativeStack.Screen name="caseentery" component={CaseEntery} />
         </NativeStack.Navigator>
       </React.Fragment>
     );
   }
 }
-export { LoginContainer };
+const mapStateToProps = (state) => {
+  return { logState: state.auth };
+};
+export const mapedStateLogin = connect(mapStateToProps)(LoginContainer);

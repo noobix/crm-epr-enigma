@@ -1,11 +1,26 @@
+Problem: This project is meant to solve the problem of patients who attend 
+hospital and have to give feed back on thier medication of treatment. Often
+Doctors require this feedback to get response on treatment.
+When the application loads the first point of call is ths get started screen.
+After the Login screen is loaded. Users are required to have an account before 
+using the appplication. Users can register on the application and when they 
+are logged in the application determins weather they are patient, a doctor 
+or a nurse. Then their home screen is loaded. The home screen comes with their 
+panel and menu. Patients can enter thier feedback based on the doctor inputting 
+some details concerning their activity.
+
+
+
 Doctor
 Create Case
 Close / Open Case
 
 (Case)
 Patient Name
+Doctor Name
 Date of Consultaion
 Diagnosis
-Case Type
+Case Type(opd,surgical,inpatient)
 Medication - Drugs -Dosage
 Feedback - Date - Data
+Status

@@ -21,7 +21,7 @@ const GetStarted = (props) => {
     <React.Fragment>
       <View style={styles.container}>
         <ImageBackground
-          source={require("../../assets/images/stockvault-human-machine-interface.jpg")}
+          source={require("../../assets/images/kentoh131000083.jpg")}
           style={styles.backgroundimg}
           resizeMode="repeat"
         ></ImageBackground>
