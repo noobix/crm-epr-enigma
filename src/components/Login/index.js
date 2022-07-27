@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 import { LoginIntroImage } from "./LoginIntroImage";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { signInUser } from "../../store/userSlice";
-import { login } from "../../store/authSlice";
 
 const Login = (props) => {
   const [email, setemail] = useState("");
@@ -19,7 +18,8 @@ const Login = (props) => {
   const handleSignIn = () => {
     if (email === "") return;
     if (password === "") return;
-    dispatch(signInUser({ email, password }));
+    const details = { email, password };
+    dispatch(signInUser(details));
   };
   return (
     <React.Fragment>

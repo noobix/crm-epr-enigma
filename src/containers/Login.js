@@ -22,16 +22,10 @@ class LoginContainer extends React.Component {
             name="registerpatient"
             component={Registeration}
           />
-          <NativeStack.Screen name="patienthome" component={PatientHome} />
-          <NativeStack.Screen name="doctorhome" component={DoctorHome} />
-          <NativeStack.Screen name="nursehome" component={NurseHome} />
           <NativeStack.Screen name="caseentery" component={CaseEntery} />
         </NativeStack.Navigator>
       </React.Fragment>
     );
   }
 }
-const mapStateToProps = (state) => {
-  return { logState: state.auth };
-};
-export const mapedStateLogin = connect(mapStateToProps)(LoginContainer);
+export { LoginContainer };

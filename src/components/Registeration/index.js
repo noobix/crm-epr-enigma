@@ -61,7 +61,7 @@ const Registeration = (props) => {
         quality: 1,
       });
       if (!result.cancelled) {
-        setimage({ image: result.uri });
+        setimage(result.uri);
       }
       // console.log(result)
     } catch (error) {
