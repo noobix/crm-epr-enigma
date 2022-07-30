@@ -6,8 +6,10 @@ import {
   Text,
   TextInput,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Dimensions,
 } from "react-native";
+import COLORS from '../Registeration/colors.js';
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Dropdown } from "react-native-element-dropdown";
@@ -44,7 +46,7 @@ const CaseEntery = () => {
     <React.Fragment>
       <SafeAreaView style={styles.container}>
         <View style={styles.casedetails}>
-          <Text style={styles.headertext}>Case Entery</Text>
+          <Text style={styles.headertext}>CASE ENTERY</Text>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <Text style={styles.formlable}>Name of Patient</Text>
             <Text></Text>
@@ -103,13 +105,39 @@ const CaseEntery = () => {
               }}
             />
           </View>
-          <TouchableWithoutFeedback>
-            <View style={styles.savebutton}>
+          {/* <TouchableWithoutFeedback> */}
+            {/* <View style={styles.savebutton}>
               <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
                 Save
               </Text>
-            </View>
-          </TouchableWithoutFeedback>
+            </View> */}
+                  {/* activeOpacity={0.7}
+      style={{
+        height: 55,
+        width: '100%',
+        backgroundColor: COLORS.blue,
+        marginVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 18}}>
+        Save
+      </Text>
+          </TouchableWithoutFeedback> */}
+            <TouchableOpacity
+      activeOpacity={0.7}
+      style={{
+        height: 55,
+        width: '100%',
+        backgroundColor: COLORS.blue,
+        marginVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 18}}>
+        Save
+      </Text>
+    </TouchableOpacity>
         </View>
       </SafeAreaView>
     </React.Fragment>
@@ -123,7 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: window.width,
     height: window.height,
-    backgroundColor: "rgb(225,225,225)",
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -141,23 +169,26 @@ const styles = StyleSheet.create({
   },
   textinput: {
     borderBottomWidth: 2,
-    borderBottomColor: "rgb(255, 176, 177)",
+    borderBottomColor: "rgb(108, 99, 255)",
     color: "rgb(29, 35, 102)",
     fontSize: 20,
-    width: 200,
+    width: 180,
     height: 40,
+    // marginLeft: 70,
   },
   headertext: {
-    fontSize: 30,
+    fontSize: 40,
     textDecorationLine: "underline",
     marginTop: 5,
     marginLeft: 20,
+    textAlign: "center",
   },
   dropdown: {
     backgroundColor: "white",
-    borderBottomColor: "rgb(255, 176, 177)",
+    borderBottomColor: "rgb(108, 99, 255)",
     borderBottomWidth: 2,
     width: 150,
+    // marginLeft: 80,
   },
   savebutton: {
     height: 40,

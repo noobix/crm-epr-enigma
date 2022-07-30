@@ -10,8 +10,12 @@ import { useDispatch } from "react-redux";
 import { LoginIntroImage } from "./LoginIntroImage";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { signInUser } from "../../store/userSlice";
+import { login } from "../../store/authSlice";
+import { useNavigation } from '@react-navigation/native';
+
 
 const Login = (props) => {
+  const navigation = useNavigation();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const dispatch = useDispatch();
@@ -50,18 +54,18 @@ const Login = (props) => {
           </View>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleSignIn()}
+            onPress={() => navigation.navigate("doctorcontainer")}
           >
             <MaterialCommunityIcons
               name="send"
               size={30}
-              color="rgb(255, 176, 177)"
+              color="white"
               style={{ paddingHorizontal: 20 }}
             />
             <Text style={styles.textbutton}>Submit</Text>
           </TouchableOpacity>
           <View>
-            <Text style={{ fontSize: 17, marginVertical: 5 }}>
+            <Text style={{ fontSize: 14, marginVertical: 5 }}>
               Don't have an account, press{" "}
               <Text
                 style={{
@@ -74,7 +78,7 @@ const Login = (props) => {
               </Text>{" "}
               to register
             </Text>
-            <Text style={{ fontSize: 17, marginVertical: 5 }}>
+            <Text style={{ fontSize: 14, marginVertical: 5 }}>
               Forgot password?, press{" "}
               <Text
                 style={{
@@ -102,10 +106,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   intoimage: {
-    flex: 0.5,
+    flex: 3,
   },
   form: {
-    flex: 0.5,
+    flex: 2,
     paddingHorizontal: 16,
   },
   inputpatient: {
@@ -118,11 +122,12 @@ const styles = StyleSheet.create({
   },
   textinput: {
     borderBottomWidth: 2,
-    borderBottomColor: "rgb(255, 176, 177)",
+    borderBottomColor: "rgb(108, 99, 255)",
     color: "rgb(29, 35, 102)",
     fontSize: 20,
     width: 230,
     height: 40,
+    marginBottom: 5,
   },
   textlabel: {
     color: "rgb(103, 96, 226)",
@@ -133,14 +138,14 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
     alignItems: "center",
-    width: 200,
-    height: 60,
+    width: 220,
+    height: 50,
     backgroundColor: "rgb(108, 99, 255)",
     marginHorizontal: 60,
     marginVertical: 20,
   },
   textbutton: {
-    color: "rgb(255, 176, 177)",
+    color: "white",
     fontSize: 40,
     fontWeight: "500",
   },
