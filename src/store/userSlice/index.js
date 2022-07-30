@@ -10,7 +10,7 @@ import { login, userid } from "../authSlice";
 
 export const registerUser = createAsyncThunk(
   "loginUser/registerUser",
-  async ({ email, password, regdata, image }, { dispatch }) => {
+  async ({ email, password, regdata, image }) => {
     try {
       const userCredentails = await createUserWithEmailAndPassword(
         auth,
@@ -21,7 +21,6 @@ export const registerUser = createAsyncThunk(
       const control = { ...regdata, uid: uid };
       await uploadProfileImage(uid, image);
       await setDoc(doc(firestore, "users", uid), control);
-      dispatch(login(true));
     } catch (e) {
       console.log(e);
     }
@@ -37,10 +36,11 @@ export const signInUser = createAsyncThunk(
         email,
         password
       );
-      const uid = userCredentails.user.id;
+      const uid = userCredentails.user.uid;
       const docRef = doc(firestore, "users", uid);
       const docSnap = await getDoc(docRef);
-      console.log(docSnap);
+      const { userType } = docSnap.data();
+      dispatch(setUserType(userType));
       dispatch(userid(uid));
       dispatch(login(true));
     } catch (error) {

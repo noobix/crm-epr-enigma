@@ -87,6 +87,7 @@ const Registeration = (props) => {
     if (gender === null) return;
     if (status === null) return;
     dispatch(registerUser({ email, password, regdata, image }));
+    props.navigation.navigate("login");
   };
   // const today = new Date();
   // const tday = zeroPad(today.getDate(), 2);

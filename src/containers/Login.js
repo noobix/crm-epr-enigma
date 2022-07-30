@@ -1,12 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GetStarted } from "../components/GetStarted";
-import { PatientHome } from "../components/PatientHome";
-import { DoctorHome } from "../components/DoctorHome";
-import { NurseHome } from "../components/NurseHome";
 import { Login } from "../components/Login";
 import { Registeration } from "../components/Registeration";
-import { connect } from "react-redux";
 import { CaseEntery } from "../components/CaseEntery";
 
 const NativeStack = createNativeStackNavigator();
