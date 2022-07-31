@@ -5,14 +5,14 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { LoginIntroImage } from "./LoginIntroImage";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { signInUser } from "../../store/userSlice";
 import { login } from "../../store/authSlice";
-import { useNavigation } from '@react-navigation/native';
-
+import { useNavigation } from "@react-navigation/native";
 
 const Login = (props) => {
   const navigation = useNavigation();
@@ -28,72 +28,74 @@ const Login = (props) => {
   return (
     <React.Fragment>
       <View style={styles.container}>
-        <View style={styles.intoimage}>
-          <LoginIntroImage />
-        </View>
-        <View style={styles.form}>
-          <View style={styles.inputpatient}>
-            <Text style={styles.textlabel}>Email</Text>
-            <TextInput
-              placeholder="Enter Your Patient ID here"
-              value={email}
-              onChangeText={(text) => setemail(text)}
-              keyboardType="email-address"
-              style={[styles.textinput, { marginLeft: 30 }]}
-            />
+        <View style={styles.page}>
+          <View style={styles.intoimage}>
+            <LoginIntroImage />
           </View>
-          <View style={styles.inputpassword}>
-            <Text style={styles.textlabel}>Password</Text>
-            <TextInput
-              placeholder="Enter Your Password here"
-              value={password}
-              onChangeText={(text) => setpassword(text)}
-              style={styles.textinput}
-              secureTextEntry
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("doctorcontainer")}
-          >
-            <MaterialCommunityIcons
-              name="send"
-              size={30}
-              color="white"
-              style={{ paddingHorizontal: 20 }}
-            />
-            <Text style={styles.textbutton}>Submit</Text>
-          </TouchableOpacity>
-          <View>
-            <Text style={{ fontSize: 14, marginVertical: 5 }}>
-              Don't have an account, press{" "}
-              <Text
-                style={{
-                  textDecorationLine: "underline",
-                  color: "rgb(29, 35, 102)",
-                }}
-                onPress={() => props.navigation.navigate("registerpatient")}
-              >
-                here
-              </Text>{" "}
-              to register
-            </Text>
-            <Text style={{ fontSize: 14, marginVertical: 5 }}>
-              Forgot password?, press{" "}
-              <Text
-                style={{
-                  textDecorationLine: "underline",
-                  color: "rgb(29, 35, 102)",
-                }}
-                onPress={() => props.navigation.navigate("caseentery")}
-              >
-                here
-              </Text>{" "}
-              to redeem
-            </Text>
-            <View style={{ flexDirection: "row", marginVertical: 5 }}>
-              <Text style={styles.helptext}>Help</Text>
-              <Ionicons name="help-circle-outline" size={30} color="black" />
+          <View style={styles.form}>
+            <View style={styles.inputpatient}>
+              <Text style={styles.textlabel}>Email</Text>
+              <TextInput
+                placeholder="Enter Your Patient ID here"
+                value={email}
+                onChangeText={(text) => setemail(text)}
+                keyboardType="email-address"
+                style={[styles.textinput, { marginLeft: 30 }]}
+              />
+            </View>
+            <View style={styles.inputpassword}>
+              <Text style={styles.textlabel}>Password</Text>
+              <TextInput
+                placeholder="Enter Your Password here"
+                value={password}
+                onChangeText={(text) => setpassword(text)}
+                style={styles.textinput}
+                secureTextEntry
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("doctorcontainer")}
+            >
+              <MaterialCommunityIcons
+                name="send"
+                size={30}
+                color="white"
+                style={{ paddingHorizontal: 20 }}
+              />
+              <Text style={styles.textbutton}>Submit</Text>
+            </TouchableOpacity>
+            <View>
+              <Text style={{ fontSize: 14, marginVertical: 5 }}>
+                Don't have an account, press{" "}
+                <Text
+                  style={{
+                    textDecorationLine: "underline",
+                    color: "rgb(29, 35, 102)",
+                  }}
+                  onPress={() => props.navigation.navigate("registerpatient")}
+                >
+                  here
+                </Text>{" "}
+                to register
+              </Text>
+              <Text style={{ fontSize: 14, marginVertical: 5 }}>
+                Forgot password?, press{" "}
+                <Text
+                  style={{
+                    textDecorationLine: "underline",
+                    color: "rgb(29, 35, 102)",
+                  }}
+                  onPress={() => props.navigation.navigate("profile")}
+                >
+                  here
+                </Text>{" "}
+                to redeem
+              </Text>
+              <View style={{ flexDirection: "row", marginVertical: 5 }}>
+                <Text style={styles.helptext}>Help</Text>
+                <Ionicons name="help-circle-outline" size={30} color="black" />
+              </View>
             </View>
           </View>
         </View>
@@ -101,9 +103,16 @@ const Login = (props) => {
     </React.Fragment>
   );
 };
+const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: window.width,
+    height: window.height,
+  },
+  page: {
+    width: "100%",
+    height: "90%",
   },
   intoimage: {
     flex: 3,

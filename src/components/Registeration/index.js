@@ -4,13 +4,12 @@ import {
   Button,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Dimensions,
 } from "react-native";
-import COLORS from './colors.js';
-import Input from './input';
+import COLORS from "./colors.js";
+import Input from "./input";
 import { useDispatch } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -64,6 +63,9 @@ const Registeration = (props) => {
     }
   };
   const handleReg = () => {
+    let [first, last] = fullname.split(" ");
+    setfname(first);
+    setlname(last);
     const regdata = {
       userType: type,
       firstName: fname,
@@ -96,8 +98,8 @@ const Registeration = (props) => {
   const [status, setstatus] = useState(null);
   const [type, settype] = useState(null);
   const [date, setdate] = useState(new Date());
-  // const [fname, setfname] = useState("");
-  // const [lname, setlname] = useState("");
+  const [fname, setfname] = useState("");
+  const [lname, setlname] = useState("");
   const [fullname, setfullname] = useState("");
   const [address, setaddress] = useState("");
   const [email, setemail] = useState("");
@@ -145,12 +147,12 @@ const Registeration = (props) => {
               />
             </View> */}
             <Input
-            onChangeText={(text) => setfullname(text)}
-            iconName="account-outline"
-            label="Full Name"
-            value={fullname}
-            placeholder="Enter your full name"
-          />
+              onChangeText={(text) => setfullname(text)}
+              iconName="account-outline"
+              label="Full Name"
+              value={fullname}
+              placeholder="Enter your full name"
+            />
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Gender</Text>
               <Dropdown
@@ -202,13 +204,13 @@ const Registeration = (props) => {
               />
             </View> */}
             <Input
-            onChangeText={(text) => setaddress(text)}
-            // onFocus={() => handleError(null, 'phone')}
-            iconName="home-outline" 
-            label="Address"
-            value={address}
-            placeholder="Enter Address here"
-          />
+              onChangeText={(text) => setaddress(text)}
+              // onFocus={() => handleError(null, 'phone')}
+              iconName="home-outline"
+              label="Address"
+              value={address}
+              placeholder="Enter Address here"
+            />
             {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Phone</Text>
               <TextInput
@@ -220,15 +222,15 @@ const Registeration = (props) => {
               />
             </View> */}
             <Input
-            keyboardType="numeric"
-            onChangeText={(text) => setphone(text)}
-            // onFocus={() => handleError(null, 'phone')}
-            iconName="phone-outline"
-            label="Phone Number"
-            value={phone}
-            placeholder="Enter your phone number"
-            // error={errors.phone}
-          />
+              keyboardType="numeric"
+              onChangeText={(text) => setphone(text)}
+              // onFocus={() => handleError(null, 'phone')}
+              iconName="phone-outline"
+              label="Phone Number"
+              value={phone}
+              placeholder="Enter your phone number"
+              // error={errors.phone}
+            />
             {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Email</Text>
               <TextInput
@@ -241,14 +243,14 @@ const Registeration = (props) => {
             </View> */}
 
             <Input
-            onChangeText={(text) => setemail(text)}
-            // onFocus={() => handleError(null, 'email')}
-            iconName="email-outline"
-            label="Email"
-            value={email}
-            placeholder="Enter your email address"
-            // error={errors.email}
-          />
+              onChangeText={(text) => setemail(text)}
+              // onFocus={() => handleError(null, 'email')}
+              iconName="email-outline"
+              label="Email"
+              value={email}
+              placeholder="Enter your email address"
+              // error={errors.email}
+            />
             {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Password</Text>
               <TextInput
@@ -260,15 +262,15 @@ const Registeration = (props) => {
               />
             </View> */}
             <Input
-           onChangeText={(text) => setpassword(text)}
-            // onFocus={() => handleError(null, 'password')}
-            iconName="lock-outline"
-            label="Password"
-            value={password}
-            placeholder="Enter your password"
-            // error={errors.password}
-            password
-          />
+              onChangeText={(text) => setpassword(text)}
+              // onFocus={() => handleError(null, 'password')}
+              iconName="lock-outline"
+              label="Password"
+              value={password}
+              placeholder="Enter your password"
+              // error={errors.password}
+              password
+            />
             {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Password</Text>
               <TextInput
@@ -279,16 +281,16 @@ const Registeration = (props) => {
                 onChangeText={(text) => setcpassword(text)}
               />
             </View> */}
-             <Input
-            onChangeText={(text) => setcpassword(text)}
-            // onFocus={() => handleError(null, 'password')}
-            iconName="lock-outline"
-            label="Confirm Password"
-            value={password}
-            placeholder=" Confirm your password"
-            // error={errors.password}
-            password
-          />
+            <Input
+              onChangeText={(text) => setcpassword(text)}
+              // onFocus={() => handleError(null, 'password')}
+              iconName="lock-outline"
+              label="Confirm Password"
+              value={password}
+              placeholder=" Confirm your password"
+              // error={errors.password}
+              password
+            />
             <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={styles.formlable}>Choose profile image</Text>
               <TouchableWithoutFeedback
@@ -323,20 +325,28 @@ const Registeration = (props) => {
                 </Text>
               </View>
             </TouchableWithoutFeedback> */}
-             <TouchableOpacity onPress={() => handleReg()}
-      activeOpacity={0.7}
-      style={{
-        height: 55,
-        width: '100%',
-        backgroundColor: COLORS.blue,
-        marginVertical: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 18}}>
-        Submit
-      </Text>
-    </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleReg()}
+              activeOpacity={0.7}
+              style={{
+                height: 55,
+                width: "100%",
+                backgroundColor: COLORS.blue,
+                marginVertical: 20,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}
+              >
+                Submit
+              </Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>
@@ -352,7 +362,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: window.width,
     height: window.height,
-
   },
   formcontainer: {
     width: "100%",
@@ -363,7 +372,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     marginTop: 5,
     marginLeft: 20,
-    fontWeight : "bold",
+    fontWeight: "bold",
     textDecorationLine: "underline",
     textAlign: "center",
   },
