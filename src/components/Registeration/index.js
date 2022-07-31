@@ -70,7 +70,6 @@ const Registeration = (props) => {
       userType: type,
       firstName: fname,
       lastName: lname,
-      fullname: fullname,
       gender: gender,
       marritalStatus: status,
       dateOfBirth: date,

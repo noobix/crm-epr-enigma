@@ -22,5 +22,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgb(225,225,225)",
   },
-  details: {},
+  details: {
+    backgroundColor: "rgb(255,255,255)",
+    width: "90%",
+    height: "80%",
+  },
 });
