@@ -3,10 +3,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
 import { auth, firestore, storage } from "../../firebase/config";
-import { login } from "../authSlice";
+import { login, userid } from "../authSlice";
 
 export const registerUser = createAsyncThunk(
   "loginUser/registerUser",
@@ -19,9 +19,7 @@ export const registerUser = createAsyncThunk(
       );
       const uid = userCredentails.user.uid;
       const control = { ...regdata, uid: uid };
-      loadXHR(image).then(function (blob) {
-        // loadToStorage(blob, uid);
-      });
+      await uploadProfileImage(uid, image);
       await setDoc(doc(firestore, "users", uid), control);
       dispatch(login(true));
     } catch (e) {
@@ -31,48 +29,47 @@ export const registerUser = createAsyncThunk(
 );
 export const signInUser = createAsyncThunk(
   "loginUser/signInUser",
-  async ({ email, password }, { dispatch }) => {
+  async (details, { dispatch }) => {
+    const { email, password } = details;
     try {
       const userCredentails = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
+      const uid = userCredentails.user.id;
+      const docRef = doc(firestore, "users", uid);
+      const docSnap = await getDoc(docRef);
+      console.log(docSnap);
+      dispatch(userid(uid));
       dispatch(login(true));
     } catch (error) {
       console.log(error);
     }
   }
 );
-const loadToStorage = createAsyncThunk(
-  "loginUser/loadToStorage",
-  async (blob, uid) => {
+const uploadProfileImage = async (uid, image) => {
+  try {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", image, true);
+      xhr.send(null);
+    });
+
     const imagesRef = ref(storage, `images/${uid}`);
     await uploadBytes(imagesRef, blob);
+  } catch (error) {
+    console.log(error);
   }
-);
-function loadXHR(url) {
-  return new Promise(function (resolve, reject) {
-    try {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", url);
-      xhr.responseType = "blob";
-      xhr.onerror = function () {
-        reject("Network error.");
-      };
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          resolve(xhr.response);
-        } else {
-          reject("Loading error:" + xhr.statusText);
-        }
-      };
-      xhr.send();
-    } catch (err) {
-      reject(err.message);
-    }
-  });
-}
+};
 const userSlice = createSlice({
   name: "loginUser",
   initialState: { user: null, userDef: null },

@@ -22,7 +22,8 @@ const Login = (props) => {
   const handleSignIn = () => {
     if (email === "") return;
     if (password === "") return;
-    dispatch(signInUser({ email, password }));
+    const details = { email, password };
+    dispatch(signInUser(details));
   };
   return (
     <React.Fragment>
