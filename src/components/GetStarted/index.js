@@ -6,6 +6,7 @@ import {
   ImageBackground,
   StyleSheet,
   Dimensions,
+  Image,  
 } from "react-native";
 // import { useDispatch } from "react-redux";
 
@@ -20,11 +21,10 @@ const GetStarted = (props) => {
   return (
     <React.Fragment>
       <View style={styles.container}>
-        <ImageBackground
-          source={require("../../assets/images/kentoh131000083.jpg")}
-          style={styles.backgroundimg}
-          resizeMode="repeat"
-        ></ImageBackground>
+        <View style={styles.txt1} >
+        <Image style={{width: 90, height: 90,}} source={require("../../assets/images/hosp.png")} />
+      <Text style={{fontSize:20}} >FEEDBACK APPLICATION</Text>
+      </View>
       </View>
     </React.Fragment>
   );
@@ -40,6 +40,13 @@ const styles = StyleSheet.create({
     height: window.height,
     position: "relative",
   },
+  txt1: {
+    flex: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection : 'row',
+   marginRight:50,
+},
   options: {
     width: "100%",
     height: "30%",

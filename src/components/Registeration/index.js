@@ -5,9 +5,12 @@ import {
   View,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   Dimensions,
 } from "react-native";
+import COLORS from './colors.js';
+import Input from './input';
 import { useDispatch } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,15 +34,7 @@ const Registeration = (props) => {
     { label: "Doctor", value: 2 },
     { label: "Nurse", value: 3 },
   ];
-  // function zeroPad(num, numZeros) {
-  //   var n = Math.abs(num);
-  //   var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-  //   var zeroString = Math.pow(10, zeros).toString().substr(1);
-  //   if (num < 0) {
-  //     zeroString = "-" + zeroString;
-  //   }
-  //   return zeroString + n;
-  // }
+
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate;
     setshow(false);
@@ -73,6 +68,7 @@ const Registeration = (props) => {
       userType: type,
       firstName: fname,
       lastName: lname,
+      fullname: fullname,
       gender: gender,
       marritalStatus: status,
       dateOfBirth: date,
@@ -83,6 +79,7 @@ const Registeration = (props) => {
     if (password !== cpassword) return;
     if (fname === "") return;
     if (lname === "") return;
+    if (fullname === "") return;
     if (type === null) return;
     if (gender === null) return;
     if (status === null) return;
@@ -98,8 +95,9 @@ const Registeration = (props) => {
   const [status, setstatus] = useState(null);
   const [type, settype] = useState(null);
   const [date, setdate] = useState(new Date());
-  const [fname, setfname] = useState("");
-  const [lname, setlname] = useState("");
+  // const [fname, setfname] = useState("");
+  // const [lname, setlname] = useState("");
+  const [fullname, setfullname] = useState("");
   const [address, setaddress] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
@@ -127,7 +125,7 @@ const Registeration = (props) => {
                 }}
               />
             </View>
-            <View style={{ flexDirection: "row" }}>
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>First Name</Text>
               <TextInput
                 style={styles.textinput}
@@ -144,7 +142,14 @@ const Registeration = (props) => {
                 value={lname}
                 onChangeText={(text) => setlname(text)}
               />
-            </View>
+            </View> */}
+            <Input
+            onChangeText={(text) => setfullname(text)}
+            iconName="account-outline"
+            label="Full Name"
+            value={fullname}
+            placeholder="Enter your full name"
+          />
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Gender</Text>
               <Dropdown
@@ -186,7 +191,7 @@ const Registeration = (props) => {
                 />
               )}
             </View>
-            <View style={{ flexDirection: "row" }}>
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Address</Text>
               <TextInput
                 style={styles.textinput}
@@ -194,8 +199,16 @@ const Registeration = (props) => {
                 value={address}
                 onChangeText={(text) => setaddress(text)}
               />
-            </View>
-            <View style={{ flexDirection: "row" }}>
+            </View> */}
+            <Input
+            onChangeText={(text) => setaddress(text)}
+            // onFocus={() => handleError(null, 'phone')}
+            iconName="home-outline" 
+            label="Address"
+            value={address}
+            placeholder="Enter Address here"
+          />
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Phone</Text>
               <TextInput
                 style={styles.textinput}
@@ -204,8 +217,18 @@ const Registeration = (props) => {
                 value={phone}
                 onChangeText={(text) => setphone(text)}
               />
-            </View>
-            <View style={{ flexDirection: "row" }}>
+            </View> */}
+            <Input
+            keyboardType="numeric"
+            onChangeText={(text) => setphone(text)}
+            // onFocus={() => handleError(null, 'phone')}
+            iconName="phone-outline"
+            label="Phone Number"
+            value={phone}
+            placeholder="Enter your phone number"
+            // error={errors.phone}
+          />
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Email</Text>
               <TextInput
                 style={styles.textinput}
@@ -214,8 +237,18 @@ const Registeration = (props) => {
                 keyboardType="email-address"
                 onChangeText={(text) => setemail(text)}
               />
-            </View>
-            <View style={{ flexDirection: "row" }}>
+            </View> */}
+
+            <Input
+            onChangeText={(text) => setemail(text)}
+            // onFocus={() => handleError(null, 'email')}
+            iconName="email-outline"
+            label="Email"
+            value={email}
+            placeholder="Enter your email address"
+            // error={errors.email}
+          />
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Password</Text>
               <TextInput
                 style={styles.textinput}
@@ -224,8 +257,18 @@ const Registeration = (props) => {
                 value={password}
                 onChangeText={(text) => setpassword(text)}
               />
-            </View>
-            <View style={{ flexDirection: "row" }}>
+            </View> */}
+            <Input
+           onChangeText={(text) => setpassword(text)}
+            // onFocus={() => handleError(null, 'password')}
+            iconName="lock-outline"
+            label="Password"
+            value={password}
+            placeholder="Enter your password"
+            // error={errors.password}
+            password
+          />
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Password</Text>
               <TextInput
                 style={styles.textinput}
@@ -234,7 +277,17 @@ const Registeration = (props) => {
                 value={cpassword}
                 onChangeText={(text) => setcpassword(text)}
               />
-            </View>
+            </View> */}
+             <Input
+            onChangeText={(text) => setcpassword(text)}
+            // onFocus={() => handleError(null, 'password')}
+            iconName="lock-outline"
+            label="Confirm Password"
+            value={password}
+            placeholder=" Confirm your password"
+            // error={errors.password}
+            password
+          />
             <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={styles.formlable}>Choose profile image</Text>
               <TouchableWithoutFeedback
@@ -262,13 +315,27 @@ const Registeration = (props) => {
                 )}
               </TouchableWithoutFeedback>
             </View>
-            <TouchableWithoutFeedback onPress={() => handleReg()}>
+            {/* <TouchableWithoutFeedback onPress={() => handleReg()}>
               <View style={styles.submitbtm}>
                 <Text style={{ fontSize: 30, color: "rgb(255,255,255)" }}>
                   Submit
                 </Text>
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback> */}
+             <TouchableOpacity onPress={() => handleReg()}
+      activeOpacity={0.7}
+      style={{
+        height: 55,
+        width: '100%',
+        backgroundColor: COLORS.blue,
+        marginVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 18}}>
+        Submit
+      </Text>
+    </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>
@@ -280,24 +347,24 @@ const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    backgroundColor: "rgb(225,225,225)",
+    paddingHorizontal: 10,
+    backgroundColor: "white",
     width: window.width,
     height: window.height,
-    alignItems: "center",
-    justifyContent: "center",
+
   },
   formcontainer: {
     width: "100%",
     height: "100%",
-    backgroundColor: "rgb(255,255,255)",
   },
   intotext: {
     fontSize: 30,
     fontWeight: "400",
     marginTop: 5,
     marginLeft: 20,
+    fontWeight : "bold",
     textDecorationLine: "underline",
+    textAlign: "center",
   },
   formlable: {
     fontSize: 18,
@@ -311,10 +378,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     width: 200,
     height: 40,
+    textAlign: "center",
   },
   dropdown: {
     backgroundColor: "white",
-    borderBottomColor: "rgb(255, 176, 177)",
+    borderBottomColor: "rgb(108, 99, 255)",
     borderBottomWidth: 2,
     width: 150,
   },

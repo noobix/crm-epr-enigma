@@ -21,6 +21,7 @@ const DoctorHome = () => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
         <View style={styles.userdetails}>
           <View>
             <Text style={styles.grettingtext}>Welcome</Text>
@@ -45,12 +46,14 @@ const DoctorHome = () => {
               position: "absolute",
               top: 6,
               left: 6,
-              backgroundColor: "rgb(225,225,225)",
+              marginLeft: 20,
             }}
             name="search"
             size={37}
             color="black"
           />
+        </View>
+        <View style={styles.middle}>
           <View style={styles.menulist}>
             <TouchableWithoutFeedback>
               <View style={styles.iconmenu}>
@@ -58,7 +61,7 @@ const DoctorHome = () => {
                   style={styles.imgicon}
                   source={require("../../assets/images/medical-record.png")}
                 />
-                <Text style={{ alignSelf: "center" }}>Clinics</Text>
+                <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Clinics</Text>
               </View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback>
@@ -67,7 +70,7 @@ const DoctorHome = () => {
                   style={styles.imgicon}
                   source={require("../../assets/images/medical-team.png")}
                 />
-                <Text style={{ alignSelf: "center" }}>Events</Text>
+                <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Events</Text>
               </View>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback>
@@ -76,7 +79,7 @@ const DoctorHome = () => {
                   style={styles.imgicon}
                   source={require("../../assets/images/patient.png")}
                 />
-                <Text style={{ alignSelf: "center" }}>Admissions</Text>
+                <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Admissions</Text>
               </View>
             </TouchableWithoutFeedback>
           </View>
@@ -88,7 +91,7 @@ const DoctorHome = () => {
                 style={styles.careimg}
                 source={require("../../assets/images/examination.png")}
               />
-              <Text style={{ alignSelf: "center" }}>Your Patient</Text>
+              <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Your Patient</Text>
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback>
@@ -97,9 +100,10 @@ const DoctorHome = () => {
                 style={styles.careimg}
                 source={require("../../assets/images/surgery-room.png")}
               />
-              <Text style={{ alignSelf: "center" }}>Operating Room</Text>
+              <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Operating Room</Text>
             </View>
           </TouchableWithoutFeedback>
+        </View>
         </View>
         <View style={styles.appointment}>
           <View style={{ flexDirection: "row" }}>
@@ -151,10 +155,14 @@ const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    backgroundColor: "rgb(225,225,225)",
-    width: window.width,
-    height: window.height,
+    paddingHorizontal: 10,
+    backgroundColor: "white",
+  },
+  header: {
+   flex:1,
+  },
+  middle: {
+    flex: 1,
   },
   grettingtext: {
     fontSize: 15,
@@ -171,14 +179,14 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    marginRight: 5,
     marginTop: 5,
+    alignItems: "right",
   },
   userdetails: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "rgb(255,255,255)",
-    marginVertical: 3,
+    // marginVertical: 3,
     borderRadius: 10,
     width: 330,
     height: 70,
@@ -187,19 +195,24 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255,255,255)",
     marginVertical: 3,
     borderRadius: 10,
-    width: 330,
-    height: 170,
+    alignItems: "center",
+
   },
   searchinput: {
-    backgroundColor: "rgb(225,225,225)",
+    border: "black",
+    borderWidth: 1,
     marginHorizontal: 5,
     marginVertical: 5,
     width: 320,
     height: 40,
     paddingLeft: 40,
     fontSize: 22,
+    borderRadius: 8,
+    
+
   },
   menulist: {
+    flex:  3,
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 5,
@@ -207,34 +220,41 @@ const styles = StyleSheet.create({
   },
   iconmenu: {
     borderWidth: 1,
+    width: 110,
+    height: 145,
     borderColor: "rgb(225,225,225)",
   },
   imgicon: {
+    marginBottom: 15,
     width: 100,
-    height: 85,
+    height: 110,
     alignSelf: "center",
   },
   patient: {
     backgroundColor: "rgb(255,255,255)",
     marginVertical: 3,
     borderRadius: 10,
-    width: 330,
-    height: 150,
+    // width: 330,
+    // height: 150,
     flexDirection: "row",
     justifyContent: "space-around",
+    flex:  1,
+    marginBottom: 50,
+    marginLeft: 10,
   },
   careimg: {
-    width: 120,
+    width: 130,
     height: 120,
   },
   careperson: {
     borderColor: "rgb(225,225,225)",
     borderWidth: 1,
-    width: 130,
+    width: 140,
     height: 140,
     marginVertical: 5,
   },
   appointment: {
+    // flex: 1,
     backgroundColor: "rgb(255,255,255)",
     marginVertical: 3,
     borderRadius: 10,
