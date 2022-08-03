@@ -2,6 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { PatientHome } from "../components/PatientHome";
 import { AntDesign } from "@expo/vector-icons";
+import { Profile } from "../components/Profile";
 import NotReady from "../components/NotReady";
 
 const BottomTabNav = createBottomTabNavigator();
@@ -53,7 +54,7 @@ class PatientContainer extends React.Component {
           />
           <BottomTabNav.Screen
             name="profile"
-            component={NotReady}
+            component={Profile}
             options={{
               tabBarIcon: ({ focused }) => (
                 <AntDesign

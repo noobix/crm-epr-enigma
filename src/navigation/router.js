@@ -4,12 +4,12 @@ import { LoginContainer } from "../containers/Login";
 import { DoctorContainer } from "../containers/Doctor";
 import { NurseContainer } from "../containers/Nurse";
 import { PatientContainer } from "../containers/Patient";
+import { Profile } from "../components/Profile";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
 import { auth } from "../firebase/config";
 import { useEffect } from "react";
-import { setUser, setUserType } from "../store/userSlice";
-import { Login } from "../components/Login";
+import { setUser } from "../store/userSlice";
 
 const NativeStack = createNativeStackNavigator();
 const Router = () => {
@@ -17,8 +17,6 @@ const Router = () => {
     authState: state.auth,
     user: state.user,
   }));
-
-  console.log("hello", authState.isAuthenticated, user.user);
   const dispatch = useDispatch();
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -30,8 +28,8 @@ const Router = () => {
       }
     });
   }, []);
-  return (
-    <NavigationContainer>
+  const authNav = () => {
+    return (
       <NativeStack.Navigator screenOptions={{ headerShown: false }}>
         {user.user && authState.isAuthenticated ? (
           <>
@@ -71,6 +69,21 @@ const Router = () => {
             />
           </>
         )}
+      </NativeStack.Navigator>
+    );
+  };
+  const accessoryNav = () => {
+    return (
+      <NativeStack.Navigator screenOptions={{ headerShown: false }}>
+        <NativeStack.Screen name="profile" component={Profile} />
+      </NativeStack.Navigator>
+    );
+  };
+  return (
+    <NavigationContainer>
+      <NativeStack.Navigator screenOptions={{ headerShown: false }}>
+        <NativeStack.Screen name="home" children={authNav} />
+        <NativeStack.Screen name="accesssory" children={accessoryNav} />
       </NativeStack.Navigator>
     </NavigationContainer>
   );

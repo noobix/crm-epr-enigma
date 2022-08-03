@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -14,23 +14,59 @@ import {
   AntDesign,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { authdata } from "../../store/authSlice";
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "../../firebase/config";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../../firebase/config";
 
-const PatientHome = () => {
+const PatientHome = (props) => {
   const [search, setsearh] = useState("");
+  const { userId } = useSelector(authdata);
+  const [name, setname] = useState("");
+  const [img, setimg] = useState(null);
+  const [profiledata, setprofiledata] = useState({});
+  useEffect(() => {
+    async function fetch() {
+      await getProfile();
+      console.log(name);
+    }
+    fetch();
+  }, []);
+  const getProfile = async () => {
+    try {
+      const docRef = doc(firestore, "users", userId);
+      const docSnap = await getDoc(docRef);
+      const profile = docSnap.data();
+      const url = await getDownloadURL(ref(storage, `images/${userId}`));
+      setprofiledata({ ...profile, image: url });
+      const { firstName, lastName } = profiledata;
+      console.log(firstName, lastName);
+      setimg(url);
+      setname(`${firstName} ${lastName}`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
         <View style={styles.userdetails}>
           <View>
             <Text style={styles.grettingtext}>Hello</Text>
-            <Text style={styles.usernametext}>Kofi Amoako</Text>
+            <Text style={styles.usernametext}>{name}</Text>
           </View>
-          <Image
-            source={{
-              uri: "https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            }}
-            style={styles.profileimg}
-          />
+          <TouchableWithoutFeedback
+            onPress={() => props.navigation.navigate("profile", profiledata)}
+          >
+            <Image
+              source={{
+                uri: img,
+              }}
+              style={styles.profileimg}
+            />
+          </TouchableWithoutFeedback>
         </View>
         <View style={styles.menu}>
           <TextInput

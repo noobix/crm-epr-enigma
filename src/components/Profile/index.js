@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Profile = () => {
+const Profile = (props) => {
+  console.log(props.route.params);
+  console.log(props.route.params.image);
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <View style={styles.details}></View>
+        <View style={styles.details}>
+          <View style={styles.profilehead}>
+            <Image
+              style={styles.image}
+              source={{ uri: props.route.params.image }}
+            />
+            <View>
+              <View>
+                <Text></Text>
+                <Text></Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </SafeAreaView>
     </React.Fragment>
   );
@@ -26,5 +41,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(255,255,255)",
     width: "90%",
     height: "80%",
+  },
+  profilehead: {
+    flexDirection: "row",
+  },
+  image: {
+    width: 90,
+    height: 90,
   },
 });

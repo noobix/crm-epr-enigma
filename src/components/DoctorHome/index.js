@@ -22,88 +22,98 @@ const DoctorHome = () => {
     <React.Fragment>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-        <View style={styles.userdetails}>
-          <View>
-            <Text style={styles.grettingtext}>Welcome</Text>
-            <Text style={styles.doctornametext}>Dr. Sylvania Brown</Text>
-          </View>
-          <Image
-            style={styles.profileimg}
-            source={{
-              uri: "https://images.pexels.com/photos/7447008/pexels-photo-7447008.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            }}
-          />
-        </View>
-        <View style={styles.menu}>
-          <TextInput
-            placeholder="Search patients here"
-            style={styles.searchinput}
-            value={search}
-            onChangeText={(text) => setsearch(text)}
-          />
-          <Octicons
-            style={{
-              position: "absolute",
-              top: 6,
-              left: 6,
-              marginLeft: 20,
-            }}
-            name="search"
-            size={37}
-            color="black"
-          />
-        </View>
-        <View style={styles.middle}>
-          <View style={styles.menulist}>
-            <TouchableWithoutFeedback>
-              <View style={styles.iconmenu}>
-                <Image
-                  style={styles.imgicon}
-                  source={require("../../assets/images/medical-record.png")}
-                />
-                <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Clinics</Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
-              <View style={styles.iconmenu}>
-                <Image
-                  style={styles.imgicon}
-                  source={require("../../assets/images/medical-team.png")}
-                />
-                <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Events</Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
-              <View style={styles.iconmenu}>
-                <Image
-                  style={styles.imgicon}
-                  source={require("../../assets/images/patient.png")}
-                />
-                <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Admissions</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </View>
-        <View style={styles.patient}>
-          <TouchableWithoutFeedback>
-            <View style={styles.careperson}>
-              <Image
-                style={styles.careimg}
-                source={require("../../assets/images/examination.png")}
-              />
-              <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Your Patient</Text>
+          <View style={styles.userdetails}>
+            <View>
+              <Text style={styles.grettingtext}>Welcome</Text>
+              <Text style={styles.doctornametext}>Dr. Sylvania Brown</Text>
             </View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <View style={styles.careperson}>
-              <Image
-                style={styles.careimg}
-                source={require("../../assets/images/surgery-room.png")}
-              />
-              <Text style={{ alignSelf: "center",fontWeight: "bold" }}>Operating Room</Text>
+            <Image
+              style={styles.profileimg}
+              source={{
+                uri: "https://images.pexels.com/photos/7447008/pexels-photo-7447008.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+              }}
+            />
+          </View>
+          <View style={styles.menu}>
+            <TextInput
+              placeholder="Search patients here"
+              style={styles.searchinput}
+              value={search}
+              onChangeText={(text) => setsearch(text)}
+            />
+            <Octicons
+              style={{
+                position: "absolute",
+                top: 6,
+                left: 6,
+                marginLeft: 20,
+              }}
+              name="search"
+              size={37}
+              color="black"
+            />
+          </View>
+          <View style={styles.middle}>
+            <View style={styles.menulist}>
+              <TouchableWithoutFeedback>
+                <View style={styles.iconmenu}>
+                  <Image
+                    style={styles.imgicon}
+                    source={require("../../assets/images/medical-record.png")}
+                  />
+                  <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
+                    Clinics
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback>
+                <View style={styles.iconmenu}>
+                  <Image
+                    style={styles.imgicon}
+                    source={require("../../assets/images/medical-team.png")}
+                  />
+                  <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
+                    Events
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback>
+                <View style={styles.iconmenu}>
+                  <Image
+                    style={styles.imgicon}
+                    source={require("../../assets/images/patient.png")}
+                  />
+                  <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
+                    Admissions
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
-          </TouchableWithoutFeedback>
-        </View>
+          </View>
+          <View style={styles.patient}>
+            <TouchableWithoutFeedback>
+              <View style={styles.careperson}>
+                <Image
+                  style={styles.careimg}
+                  source={require("../../assets/images/examination.png")}
+                />
+                <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
+                  Your Patient
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback>
+              <View style={styles.careperson}>
+                <Image
+                  style={styles.careimg}
+                  source={require("../../assets/images/surgery-room.png")}
+                />
+                <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
+                  Operating Room
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
         <View style={styles.appointment}>
           <View style={{ flexDirection: "row" }}>
@@ -159,7 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   header: {
-   flex:1,
+    flex: 1,
   },
   middle: {
     flex: 1,
@@ -180,7 +190,6 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     marginTop: 5,
-    alignItems: "right",
   },
   userdetails: {
     flexDirection: "row",
@@ -196,10 +205,8 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     borderRadius: 10,
     alignItems: "center",
-
   },
   searchinput: {
-    border: "black",
     borderWidth: 1,
     marginHorizontal: 5,
     marginVertical: 5,
@@ -208,11 +215,9 @@ const styles = StyleSheet.create({
     paddingLeft: 40,
     fontSize: 22,
     borderRadius: 8,
-    
-
   },
   menulist: {
-    flex:  3,
+    flex: 3,
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 5,
@@ -238,7 +243,7 @@ const styles = StyleSheet.create({
     // height: 150,
     flexDirection: "row",
     justifyContent: "space-around",
-    flex:  1,
+    flex: 1,
     marginBottom: 50,
     marginLeft: 10,
   },

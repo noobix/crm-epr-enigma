@@ -11,11 +11,8 @@ import { useDispatch } from "react-redux";
 import { LoginIntroImage } from "./LoginIntroImage";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { signInUser } from "../../store/userSlice";
-import { login } from "../../store/authSlice";
-import { useNavigation } from "@react-navigation/native";
 
 const Login = (props) => {
-  const navigation = useNavigation();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const dispatch = useDispatch();
@@ -55,7 +52,7 @@ const Login = (props) => {
             </View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("doctorcontainer")}
+              onPress={() => handleSignIn()}
             >
               <MaterialCommunityIcons
                 name="send"
