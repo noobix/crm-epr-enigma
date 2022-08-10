@@ -1,40 +1,167 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  Button,
   View,
   Text,
   TextInput,
   TouchableWithoutFeedback,
   Dimensions,
+  ScrollView,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Dropdown } from "react-native-element-dropdown";
+import SelectDropdown from "react-native-select-dropdown";
+import { firestore } from "../../firebase/config";
+import { storage } from "../../firebase/config";
+import { getDownloadURL, ref } from "firebase/storage";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const FindPatient = () => {
   const data1 = [
     { label: "Male", value: 1 },
     { label: "Female", value: 2 },
   ];
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setshow(false);
-    setdate(currentDate.toLocaleString());
-  };
-  const showMode = (currentMode) => {
-    setshow(true);
-    setmode(currentMode);
-  };
-  const showDatepicker = () => {
-    showMode("date");
-  };
   const [fname, setfname] = useState("");
   const [lname, setlname] = useState("");
   const [gender, setgender] = useState(null);
-  const [show, setshow] = useState(false);
-  const [mode, setmode] = useState(null);
-  const [date, setdate] = useState(new Date());
+  const [dataset, setdataset] = useState([]);
+  dataset && console.log("prime:", dataset);
+  let searchString = "";
+  if (fname !== "") {
+    searchString += "f";
+  }
+  if (lname !== "") {
+    searchString += "l";
+  }
+  if (gender !== null) {
+    searchString += "g";
+  }
+  const reset = () => {
+    setfname("");
+    setlname("");
+    setgender(null);
+    setdataset([]);
+  };
+  // useEffect(() => {
+  //   setdataset();
+  // }, [dataset]);
+  const singleSearchF = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("firstName", "==", fname),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset([...dataset, { ...obj, image: url }]);
+      console.log(dataset);
+    });
+  };
+  const singleSearchL = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("lastName", "==", lname),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+    });
+  };
+  const singleSearchG = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("gender", "==", gender),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+    });
+  };
+  const doubleSearchFL = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("firstName", "==", fname),
+      where("lastName", "==", lname),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+    });
+  };
+  const doubleSearchFG = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("firstName", "==", fname),
+      where("gender", "==", gender),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+    });
+  };
+  const doubleSearchLG = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("lastName", "==", lname),
+      where("gender", "==", gender),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+    });
+  };
+  const allSearch = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("firstName", "==", fname),
+      where("lastName", "==", lname),
+      where("gender", "==", gender),
+      where("userType", "==", "Patient")
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+    });
+  };
+  const searchConfig = () => {
+    switch (searchString) {
+      case "f":
+        singleSearchF();
+        break;
+      case "l":
+        singleSearchL();
+        break;
+      case "g":
+        singleSearchG();
+        break;
+      case "fl" || "lf":
+        doubleSearchFL();
+        break;
+      case "fg" || "gf":
+        doubleSearchFG();
+        break;
+      case "lg" || "gl":
+        doubleSearchLG();
+        break;
+      case "flg" || "lfg" || "glf" || "fgl" || "gfl" || "lgf":
+        allSearch();
+        break;
+    }
+  };
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -60,40 +187,73 @@ const FindPatient = () => {
           </View>
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.formlable}>Gender</Text>
-            <Dropdown
-              style={styles.dropdown}
-              data={data1}
-              labelField="label"
-              valueField="value"
-              placeholder="Select gender"
-              value={gender}
-              onChange={(item) => {
-                setgender(item.label);
+            <SelectDropdown
+              buttonStyle={{
+                height: 40,
+              }}
+              data={["Male", "Female"]}
+              onSelect={(selectedItem, index) => {
+                setgender(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
               }}
             />
           </View>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
-            <Text style={styles.formlable}>Date of Birth</Text>
-            <Button onPress={showDatepicker} title="Select Date" />
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                onChange={onChangeDate}
-              />
-            )}
+          <View style={{ flexDirection: "row" }}>
+            <TouchableWithoutFeedback onPress={() => searchConfig()}>
+              <View style={[styles.button, { marginLeft: 140 }]}>
+                <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
+                  Search
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => reset()}>
+              <View style={[styles.button, { marginLeft: 10 }]}>
+                <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
+                  Reset
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-          <TouchableWithoutFeedback>
-            <View style={styles.searchbutton}>
-              <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
-                Submit
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
         </View>
-        <View style={styles.resultarea}></View>
+        <View style={styles.resultarea}>
+          <ScrollView>
+            {dataset &&
+              dataset.map(
+                (
+                  { firstName, lastName, dateOfBirth, gender, image },
+                  index
+                ) => (
+                  <View key={index} style={{ flexDirection: "row", flex: 0.3 }}>
+                    <Image
+                      style={{ width: 90, height: 90 }}
+                      source={{ uri: image }}
+                    />
+                    <View>
+                      <View style={{ flexDirection: "row" }}>
+                        <Text>Name</Text>
+                        <Text>
+                          {firstName} {lastName}
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: "row" }}>
+                        <Text>Date Of Birth</Text>
+                        <Text>{dateOfBirth}</Text>
+                      </View>
+                      <View style={{ flexDirection: "row" }}>
+                        <Text>Gender</Text>
+                        <Text>{gender}</Text>
+                      </View>
+                    </View>
+                  </View>
+                )
+              )}
+          </ScrollView>
+        </View>
       </SafeAreaView>
     </React.Fragment>
   );
@@ -112,14 +272,14 @@ const styles = StyleSheet.create({
   },
   searcharea: {
     width: "100%",
-    height: "38%",
+    height: "35%",
     backgroundColor: "rgb(255,255,255)",
     marginBottom: 2.0,
     borderRadius: 15,
   },
   resultarea: {
     width: "100%",
-    height: "57%",
+    height: "60%",
     backgroundColor: "rgb(255,255,255)",
     marginTop: 2.0,
     borderRadius: 15,
@@ -149,12 +309,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 20,
   },
-  searchbutton: {
+  button: {
     height: 40,
     width: 80,
     backgroundColor: "rgb(108, 99, 255)",
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 220,
+    marginTop: 10,
   },
 });

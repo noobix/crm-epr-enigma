@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,23 +10,59 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Octicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { authdata } from "../../store/authSlice";
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "../../firebase/config";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../../firebase/config";
 
-const NurseHome = () => {
+const NurseHome = (props) => {
   const [search, setsearch] = useState("");
+  const { userId } = useSelector(authdata);
+  const [name, setname] = useState("");
+  const [img, setimg] = useState(null);
+  const [profiledata, setprofiledata] = useState({});
+  useEffect(() => {
+    async function fetch() {
+      await getProfile();
+    }
+    fetch();
+  }, []);
+  const getProfile = async () => {
+    try {
+      const docRef = doc(firestore, "users", userId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists) {
+        const profile = docSnap.data();
+        const { firstName, lastName } = profile;
+        const url = await getDownloadURL(ref(storage, `images/${userId}`));
+        setprofiledata({ ...profile, image: url });
+        setname(`${firstName} ${lastName}`);
+        setimg(url);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
         <View style={styles.userdetails}>
           <View>
             <Text style={styles.grettingtext}>Welcome</Text>
-            <Text style={styles.doctornametext}>Miss Joyce Smith</Text>
+            <Text style={styles.doctornametext}>{name}</Text>
           </View>
-          <Image
-            style={styles.profileimg}
-            source={{
-              uri: "https://images.pexels.com/photos/6098047/pexels-photo-6098047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            }}
-          />
+          <TouchableWithoutFeedback
+            onPress={() => props.navigation.navigate("profile", profiledata)}
+          >
+            <Image
+              style={styles.profileimg}
+              source={{
+                uri: img,
+              }}
+            />
+          </TouchableWithoutFeedback>
         </View>
         <View style={styles.menu}>
           <TextInput

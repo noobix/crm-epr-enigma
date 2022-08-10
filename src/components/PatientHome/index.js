@@ -22,15 +22,14 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../firebase/config";
 
 const PatientHome = (props) => {
-  const [search, setsearh] = useState("");
   const { userId } = useSelector(authdata);
+  const [search, setsearh] = useState("");
   const [name, setname] = useState("");
   const [img, setimg] = useState(null);
   const [profiledata, setprofiledata] = useState({});
   useEffect(() => {
     async function fetch() {
       await getProfile();
-      console.log(name);
     }
     fetch();
   }, []);
@@ -38,13 +37,14 @@ const PatientHome = (props) => {
     try {
       const docRef = doc(firestore, "users", userId);
       const docSnap = await getDoc(docRef);
-      const profile = docSnap.data();
-      const url = await getDownloadURL(ref(storage, `images/${userId}`));
-      setprofiledata({ ...profile, image: url });
-      const { firstName, lastName } = profiledata;
-      console.log(firstName, lastName);
-      setimg(url);
-      setname(`${firstName} ${lastName}`);
+      if (docSnap.exists) {
+        const profile = docSnap.data();
+        const { firstName, lastName } = profile;
+        const url = await getDownloadURL(ref(storage, `images/${userId}`));
+        setprofiledata({ ...profile, image: url });
+        setname(`${firstName} ${lastName}`);
+        setimg(url);
+      }
     } catch (err) {
       console.log(err);
     }

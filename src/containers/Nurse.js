@@ -1,5 +1,11 @@
 import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { AntDesign } from "@expo/vector-icons";
+import NotReady from "../components/NotReady";
+import { NurseHome } from "../components/NurseHome";
+import { Profile } from "../components/Profile";
 
+const BottomTabNav = createBottomTabNavigator();
 class NurseContainer extends React.Component {
   render() {
     return (
@@ -9,7 +15,7 @@ class NurseContainer extends React.Component {
         >
           <BottomTabNav.Screen
             name="home"
-            component={PatientHome}
+            component={NurseHome}
             options={{
               tabBarIcon: ({ focused }) => (
                 <AntDesign
@@ -48,7 +54,7 @@ class NurseContainer extends React.Component {
           />
           <BottomTabNav.Screen
             name="profile"
-            component={NotReady}
+            component={Profile}
             options={{
               tabBarIcon: ({ focused }) => (
                 <AntDesign

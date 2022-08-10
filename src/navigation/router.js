@@ -5,6 +5,7 @@ import { DoctorContainer } from "../containers/Doctor";
 import { NurseContainer } from "../containers/Nurse";
 import { PatientContainer } from "../containers/Patient";
 import { Profile } from "../components/Profile";
+import { FindPatient } from "../components/FindPatient";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
 import { auth } from "../firebase/config";
@@ -72,18 +73,12 @@ const Router = () => {
       </NativeStack.Navigator>
     );
   };
-  const accessoryNav = () => {
-    return (
-      <NativeStack.Navigator screenOptions={{ headerShown: false }}>
-        <NativeStack.Screen name="profile" component={Profile} />
-      </NativeStack.Navigator>
-    );
-  };
   return (
     <NavigationContainer>
       <NativeStack.Navigator screenOptions={{ headerShown: false }}>
         <NativeStack.Screen name="home" children={authNav} />
-        <NativeStack.Screen name="accesssory" children={accessoryNav} />
+        <NativeStack.Screen name="profile" component={Profile} />
+        <NativeStack.Screen name="findpatient" component={FindPatient} />
       </NativeStack.Navigator>
     </NavigationContainer>
   );

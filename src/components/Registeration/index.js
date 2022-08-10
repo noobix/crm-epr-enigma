@@ -13,30 +13,19 @@ import Input from "./input";
 import { useDispatch } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Dropdown } from "react-native-element-dropdown";
+import SelectDropdown from "react-native-select-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { registerUser } from "../../store/userSlice";
 import * as ImagePicker from "expo-image-picker";
 
 const Registeration = (props) => {
-  const data1 = [
-    { label: "Male", value: 1 },
-    { label: "Female", value: 2 },
-  ];
-  const data2 = [
-    { label: "Single", value: 1 },
-    { label: "Married", value: 2 },
-    { label: "Divorced", value: 3 },
-  ];
-  const data3 = [
-    { label: "Patient", value: 1 },
-    { label: "Doctor", value: 2 },
-    { label: "Nurse", value: 3 },
-  ];
-
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate;
     setshow(false);
+    if (event?.type === "dismissed") {
+      setdate(date);
+      return;
+    }
     setdate(currentDate.toLocaleString());
   };
   const showMode = (currentMode) => {
@@ -50,6 +39,7 @@ const Registeration = (props) => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        presentationStyle: 0,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -63,9 +53,10 @@ const Registeration = (props) => {
     }
   };
   const handleReg = () => {
-    let [first, last] = fullname.split(" ");
+    const [first, last] = fullname.split(" ");
     setfname(first);
     setlname(last);
+    // console.log("1221", fname, lname);
     const regdata = {
       userType: type,
       firstName: fname,
@@ -80,7 +71,6 @@ const Registeration = (props) => {
     if (password !== cpassword) return;
     if (fname === "") return;
     if (lname === "") return;
-    if (fullname === "") return;
     if (type === null) return;
     if (gender === null) return;
     if (status === null) return;
@@ -115,15 +105,22 @@ const Registeration = (props) => {
             <Text style={styles.intotext}>Registration</Text>
             <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={styles.formlable}>Type</Text>
-              <Dropdown
-                style={[styles.dropdown, { width: 200 }]}
-                data={data3}
-                labelField="label"
-                valueField="value"
-                placeholder="Select registration type"
-                value={type}
-                onChange={(item) => {
-                  settype(item.label);
+              <SelectDropdown
+                buttonStyle={{
+                  backgroundColor: COLORS.light,
+                  height: 40,
+                  width: 300,
+                }}
+                buttonTextStyle={{ color: COLORS.grey }}
+                data={["Patient", "Doctor", "Nurse"]}
+                onSelect={(selectedItem, index) => {
+                  settype(selectedItem);
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item;
                 }}
               />
             </View>
@@ -154,39 +151,62 @@ const Registeration = (props) => {
             />
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.formlable}>Gender</Text>
-              <Dropdown
-                style={styles.dropdown}
-                data={data1}
-                labelField="label"
-                valueField="value"
-                placeholder="Select gender"
-                value={gender}
-                onChange={(item) => {
-                  setgender(item.label);
+              <SelectDropdown
+                buttonStyle={{
+                  backgroundColor: COLORS.light,
+                  height: 40,
+                  width: 290,
+                }}
+                buttonTextStyle={{ color: COLORS.grey }}
+                data={["Male", "Female"]}
+                onSelect={(selectedItem, index) => {
+                  setgender(selectedItem);
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item;
                 }}
               />
             </View>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={styles.formlable}>Marital Status</Text>
-              <Dropdown
-                style={styles.dropdown}
-                data={data2}
-                labelField="label"
-                valueField="value"
-                placeholder="Select status"
-                value={status}
-                onChange={(item) => {
-                  setstatus(item.label);
+              <SelectDropdown
+                buttonStyle={{
+                  backgroundColor: COLORS.light,
+                  height: 40,
+                  width: 250,
+                }}
+                buttonTextStyle={{ color: COLORS.grey }}
+                data={["Single", "Married", "Divorced", "Separated"]}
+                onSelect={(selectedItem, index) => {
+                  setstatus(selectedItem);
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item;
                 }}
               />
             </View>
             <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={styles.formlable}>Date of Birth</Text>
-              <Button onPress={showDatepicker} title="Select Date" />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: COLORS.light,
+                  width: 200,
+                  height: 40,
+                }}
+                onPress={() => showDatepicker()}
+              >
+                <Text>Select Date</Text>
+              </TouchableOpacity>
               {show && (
                 <DateTimePicker
                   testID="dateTimePicker"
-                  value={date}
+                  value={new Date()}
                   mode={mode}
                   is24Hour={true}
                   onChange={onChangeDate}
@@ -285,7 +305,7 @@ const Registeration = (props) => {
               // onFocus={() => handleError(null, 'password')}
               iconName="lock-outline"
               label="Confirm Password"
-              value={password}
+              value={cpassword}
               placeholder=" Confirm your password"
               // error={errors.password}
               password
