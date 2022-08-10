@@ -69,12 +69,12 @@ const Login = (props) => {
                   style={{
                     textDecorationLine: "underline",
                     color: "rgb(29, 35, 102)",
+                    fontSize: 20,
                   }}
                   onPress={() => props.navigation.navigate("registerpatient")}
                 >
-                  here
-                </Text>{" "}
-                to register
+                  register
+                </Text>
               </Text>
               <Text style={{ fontSize: 14, marginVertical: 5 }}>
                 Forgot password?, press{" "}
@@ -82,12 +82,12 @@ const Login = (props) => {
                   style={{
                     textDecorationLine: "underline",
                     color: "rgb(29, 35, 102)",
+                    fontSize: 20,
                   }}
                   onPress={() => props.navigation.navigate("profile")}
                 >
-                  here
-                </Text>{" "}
-                to redeem
+                  redeem
+                </Text>
               </Text>
               <View style={{ flexDirection: "row", marginVertical: 5 }}>
                 <Text style={styles.helptext}>Help</Text>
