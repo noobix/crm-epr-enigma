@@ -11,12 +11,15 @@ import { login } from "../store/authSlice";
 import { auth } from "../firebase/config";
 import { useEffect } from "react";
 import { setUser } from "../store/userSlice";
+import { CaseEntery } from "../components/CaseEntery";
+import { FeedBack } from "../components/FeedBack";
+import { FeedBackForm } from "../components/FeedBackForm";
 
 const NativeStack = createNativeStackNavigator();
 const Router = () => {
-  const { authState, user } = useSelector((state) => ({
-    authState: state.auth,
-    user: state.user,
+  const { userState, authState } = useSelector((state) => ({
+    userState: state._persistedReducer.user,
+    authState: state._persistedReducer.auth,
   }));
   const dispatch = useDispatch();
   useEffect(() => {
@@ -29,26 +32,27 @@ const Router = () => {
       }
     });
   }, []);
+
   const authNav = () => {
     return (
       <NativeStack.Navigator screenOptions={{ headerShown: false }}>
-        {user.user && authState.isAuthenticated ? (
+        {userState.user && authState.isAuthenticated ? (
           <>
-            {user.userDef === "Doctor" ? (
+            {userState.userDef === "Doctor" ? (
               <>
                 <NativeStack.Screen
                   name="doctorcontainer"
                   component={DoctorContainer}
                 />
               </>
-            ) : user.userDef === "Nurse" ? (
+            ) : userState.userDef === "Nurse" ? (
               <>
                 <NativeStack.Screen
                   name="nursecontainer"
                   component={NurseContainer}
                 />
               </>
-            ) : user.userDef === "Patient" ? (
+            ) : userState.userDef === "Patient" ? (
               <>
                 <NativeStack.Screen
                   name="patientcontainer"
@@ -79,6 +83,9 @@ const Router = () => {
         <NativeStack.Screen name="home" children={authNav} />
         <NativeStack.Screen name="profile" component={Profile} />
         <NativeStack.Screen name="findpatient" component={FindPatient} />
+        <NativeStack.Screen name="caseentery" component={CaseEntery} />
+        <NativeStack.Screen name="feedback" component={FeedBack} />
+        <NativeStack.Screen name="feedbackform" component={FeedBackForm} />
       </NativeStack.Navigator>
     </NavigationContainer>
   );

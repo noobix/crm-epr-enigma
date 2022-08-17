@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,21 @@ const Profile = (props) => {
     await signOut(auth);
     console.log("user signed out");
   };
+  function zeroPad(num, numZeros) {
+    var n = Math.abs(num);
+    var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+    var zeroString = Math.pow(10, zeros).toString().substr(1);
+    if (num < 0) {
+      zeroString = "-" + zeroString;
+    }
+    return zeroString + n;
+  }
+  const unformatedate = props.route.params.dateOfBirth;
+  const rdate = new Date(unformatedate);
+  const day = zeroPad(rdate.getDate(), 2);
+  const month = zeroPad(rdate.getMonth() + 1, 2);
+  const year = rdate.getFullYear();
+  const [dateofbirth, setdateofbirth] = useState(`${month}-${day}-${year}`);
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -52,7 +67,7 @@ const Profile = (props) => {
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.textlabel}>Date Of Birth</Text>
               <Text style={{ fontSize: 20, marginBottom: 10 }}>
-                {props.route.params.dateOfBirth}
+                {dateofbirth}
               </Text>
             </View>
             <View style={{ flexDirection: "row" }}>

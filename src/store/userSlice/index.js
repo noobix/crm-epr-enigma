@@ -103,5 +103,7 @@ const userSlice = createSlice({
   },
 });
 export const { setUser, setUserType } = userSlice.actions;
-export const userdata = (state) => state.user;
+export const userdata = ({ persistedReducer: { auth, user } }) => {
+  return { user, auth };
+};
 export default userSlice.reducer;

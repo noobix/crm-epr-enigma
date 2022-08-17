@@ -1,26 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Button,
   View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import COLORS from '../Registeration/colors.js';
+import COLORS from "../Registeration/colors.js";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Dropdown } from "react-native-element-dropdown";
+import SelectDropdown from "react-native-select-dropdown";
+import { saveCaseDetails } from "../../store/feedbackSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { firestore } from "../../firebase/config";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
-const CaseEntery = () => {
+const CaseEntery = (props) => {
   const [show, setshow] = useState(false);
   const [mode, setmode] = useState(null);
   const [date, setdate] = useState(new Date());
   const [diagnosis, setdiagnosis] = useState("");
+  const [doctor, setdoctor] = useState("");
   const [casetype, setcasetype] = useState(null);
   const [status, setstatus] = useState(null);
+  const { authState } = useSelector((state) => ({
+    authState: state._persistedReducer.auth,
+  }));
+  async function getuser() {
+    const itemstore = collection(firestore, "users");
+    const item = query(itemstore, where("uid", "==", authState.userId));
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach((doc) => {
+      const rsle = doc.data();
+      setdoctor(`${rsle.firstName} ${rsle.lastName}`);
+    });
+  }
+  useEffect(() => {
+    getuser();
+  }, []);
+  const dispatch = useDispatch();
+  const handleCreateCase = () => {
+    const caseData = {
+      name: props.route.params.name,
+      doctor: doctor,
+      date: date,
+      diagnosis: diagnosis,
+      casetype: casetype,
+      status: status,
+      uid: props.route.params.uid,
+    };
+    dispatch(saveCaseDetails(caseData));
+    props.navigation.navigate("findpatient");
+  };
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate;
     setshow(false);
@@ -33,15 +66,6 @@ const CaseEntery = () => {
   const showDatepicker = () => {
     showMode("date");
   };
-  const data1 = [
-    { label: "Outpatient", value: 1 },
-    { label: "Surgical", value: 2 },
-    { label: "Inpatient", value: 3 },
-  ];
-  const data2 = [
-    { label: "Open", value: 1 },
-    { label: "Closed", value: 2 },
-  ];
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -49,11 +73,11 @@ const CaseEntery = () => {
           <Text style={styles.headertext}>CASE ENTERY</Text>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <Text style={styles.formlable}>Name of Patient</Text>
-            <Text></Text>
+            <Text>{props.route.params.name}</Text>
           </View>
           <View style={{ flexDirection: "row", marginTop: 3 }}>
             <Text style={styles.formlable}>Name of Doctor</Text>
-            <Text></Text>
+            <Text>{doctor}</Text>
           </View>
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.formlable}>Date of Comsultation</Text>
@@ -61,7 +85,7 @@ const CaseEntery = () => {
             {show && (
               <DateTimePicker
                 testID="dateTimePicker"
-                value={date}
+                value={new Date()}
                 mode={mode}
                 is24Hour={true}
                 onChange={onChangeDate}
@@ -79,39 +103,41 @@ const CaseEntery = () => {
           </View>
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.formlable}>Case Type</Text>
-            <Dropdown
-              style={styles.dropdown}
-              data={data1}
-              labelField="label"
-              valueField="value"
-              placeholder="Select case type"
-              value={casetype}
-              onChange={(item) => {
-                setcasetype(item.label);
+            <SelectDropdown
+              data={["Outpatient", "Surgical", "Inpatient"]}
+              onSelect={(selectedItem, index) => {
+                setcasetype(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
               }}
             />
           </View>
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.formlable}>Status</Text>
-            <Dropdown
-              style={styles.dropdown}
-              data={data2}
-              labelField="label"
-              valueField="value"
-              placeholder="Select Status"
-              value={status}
-              onChange={(item) => {
-                setstatus(item.label);
+            <SelectDropdown
+              data={["Open", "Close"]}
+              onSelect={(selectedItem, index) => {
+                setstatus(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
               }}
             />
           </View>
           {/* <TouchableWithoutFeedback> */}
-            {/* <View style={styles.savebutton}>
+          {/* <View style={styles.savebutton}>
               <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
                 Save
               </Text>
             </View> */}
-                  {/* activeOpacity={0.7}
+          {/* activeOpacity={0.7}
       style={{
         height: 55,
         width: '100%',
@@ -124,20 +150,24 @@ const CaseEntery = () => {
         Save
       </Text>
           </TouchableWithoutFeedback> */}
-            <TouchableOpacity
-      activeOpacity={0.7}
-      style={{
-        height: 55,
-        width: '100%',
-        backgroundColor: COLORS.blue,
-        marginVertical: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 18}}>
-        Save
-      </Text>
-    </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleCreateCase()}
+            activeOpacity={0.7}
+            style={{
+              height: 55,
+              width: "100%",
+              backgroundColor: COLORS.blue,
+              marginVertical: 20,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{ color: COLORS.white, fontWeight: "bold", fontSize: 18 }}
+            >
+              Save
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </React.Fragment>

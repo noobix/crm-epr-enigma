@@ -11,12 +11,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SelectDropdown from "react-native-select-dropdown";
+import { CaseEntery } from "../CaseEntery";
 import { firestore } from "../../firebase/config";
 import { storage } from "../../firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
-const FindPatient = () => {
+const FindPatient = (props) => {
   const data1 = [
     { label: "Male", value: 1 },
     { label: "Female", value: 2 },
@@ -25,7 +26,6 @@ const FindPatient = () => {
   const [lname, setlname] = useState("");
   const [gender, setgender] = useState(null);
   const [dataset, setdataset] = useState([]);
-  dataset && console.log("prime:", dataset);
   let searchString = "";
   if (fname !== "") {
     searchString += "f";
@@ -42,34 +42,32 @@ const FindPatient = () => {
     setgender(null);
     setdataset([]);
   };
-  // useEffect(() => {
-  //   setdataset();
-  // }, [dataset]);
   const singleSearchF = async () => {
     const itemstore = collection(firestore, "users");
     const item = query(
       itemstore,
-      where("firstName", "==", fname),
+      where("firstName", "==", fname.trim()),
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset([...dataset, { ...obj, image: url }]);
-      console.log(dataset);
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const singleSearchL = async () => {
     const itemstore = collection(firestore, "users");
     const item = query(
       itemstore,
-      where("lastName", "==", lname),
+      where("lastName", "==", lname.trim()),
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const singleSearchG = async () => {
@@ -80,85 +78,102 @@ const FindPatient = () => {
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const doubleSearchFL = async () => {
     const itemstore = collection(firestore, "users");
     const item = query(
       itemstore,
-      where("firstName", "==", fname),
-      where("lastName", "==", lname),
+      where("firstName", "==", fname.trim()),
+      where("lastName", "==", lname.trim()),
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const doubleSearchFG = async () => {
     const itemstore = collection(firestore, "users");
     const item = query(
       itemstore,
-      where("firstName", "==", fname),
+      where("firstName", "==", fname.trim()),
       where("gender", "==", gender),
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const doubleSearchLG = async () => {
     const itemstore = collection(firestore, "users");
     const item = query(
       itemstore,
-      where("lastName", "==", lname),
+      where("lastName", "==", lname.trim()),
       where("gender", "==", gender),
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const allSearch = async () => {
     const itemstore = collection(firestore, "users");
     const item = query(
       itemstore,
-      where("firstName", "==", fname),
-      where("lastName", "==", lname),
+      where("firstName", "==", fname.trim()),
+      where("lastName", "==", lname.trim()),
       where("gender", "==", gender),
       where("userType", "==", "Patient")
     );
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data());
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
     });
   };
   const searchConfig = () => {
     switch (searchString) {
       case "f":
         singleSearchF();
+        setdataset([]);
         break;
       case "l":
         singleSearchL();
+        setdataset([]);
         break;
       case "g":
         singleSearchG();
+        setdataset([]);
         break;
       case "fl" || "lf":
         doubleSearchFL();
+        setdataset([]);
         break;
       case "fg" || "gf":
         doubleSearchFG();
+        setdataset([]);
         break;
       case "lg" || "gl":
         doubleSearchLG();
+        setdataset([]);
         break;
       case "flg" || "lfg" || "glf" || "fgl" || "gfl" || "lgf":
         allSearch();
+        setdataset([]);
         break;
     }
   };
@@ -225,31 +240,44 @@ const FindPatient = () => {
             {dataset &&
               dataset.map(
                 (
-                  { firstName, lastName, dateOfBirth, gender, image },
+                  { firstName, lastName, dateOfBirth, gender, image, uid },
                   index
                 ) => (
-                  <View key={index} style={{ flexDirection: "row", flex: 0.3 }}>
-                    <Image
-                      style={{ width: 90, height: 90 }}
-                      source={{ uri: image }}
-                    />
-                    <View>
-                      <View style={{ flexDirection: "row" }}>
-                        <Text>Name</Text>
-                        <Text>
-                          {firstName} {lastName}
-                        </Text>
-                      </View>
-                      <View style={{ flexDirection: "row" }}>
-                        <Text>Date Of Birth</Text>
-                        <Text>{dateOfBirth}</Text>
-                      </View>
-                      <View style={{ flexDirection: "row" }}>
-                        <Text>Gender</Text>
-                        <Text>{gender}</Text>
+                  <TouchableWithoutFeedback
+                    key={index}
+                    onPress={() =>
+                      props.navigation.navigate("caseentery", {
+                        name: `${firstName} ${lastName}`,
+                        uid: uid,
+                      })
+                    }
+                  >
+                    <View
+                      onStartShouldSetResponder={() => true}
+                      style={{ flexDirection: "row", flex: 0.3 }}
+                    >
+                      <Image
+                        style={{ width: 90, height: 90 }}
+                        source={{ uri: image }}
+                      />
+                      <View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text>Name</Text>
+                          <Text>
+                            {firstName} {lastName}
+                          </Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text>Date Of Birth</Text>
+                          <Text>{dateOfBirth}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text>Gender</Text>
+                          <Text>{gender}</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
+                  </TouchableWithoutFeedback>
                 )
               )}
           </ScrollView>

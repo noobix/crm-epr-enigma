@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { GetStarted } from "../components/GetStarted";
 import { Login } from "../components/Login";
 import { Registeration } from "../components/Registeration";
-import { Profile } from "../components/Profile";
 
 const NativeStack = createNativeStackNavigator();
 class LoginContainer extends React.Component {
@@ -18,7 +17,6 @@ class LoginContainer extends React.Component {
             name="registerpatient"
             component={Registeration}
           />
-          <NativeStack.Screen name="profile" component={Profile} />
         </NativeStack.Navigator>
       </React.Fragment>
     );

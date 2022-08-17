@@ -16,7 +16,6 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { authdata } from "../../store/authSlice";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
@@ -24,7 +23,9 @@ import { storage } from "../../firebase/config";
 
 const DoctorHome = (props) => {
   const [search, setsearch] = useState("");
-  const { userId } = useSelector(authdata);
+  const { authState } = useSelector((state) => ({
+    authState: state._persistedReducer.auth,
+  }));
   const [name, setname] = useState("");
   const [img, setimg] = useState(null);
   const [profiledata, setprofiledata] = useState({});
@@ -36,12 +37,14 @@ const DoctorHome = (props) => {
   }, []);
   const getProfile = async () => {
     try {
-      const docRef = doc(firestore, "users", userId);
+      const docRef = doc(firestore, "users", authState.userId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists) {
         const profile = docSnap.data();
         const { firstName, lastName } = profile;
-        const url = await getDownloadURL(ref(storage, `images/${userId}`));
+        const url = await getDownloadURL(
+          ref(storage, `images/${authState.userId}`)
+        );
         setprofiledata({ ...profile, image: url });
         setname(`${firstName} ${lastName}`);
         setimg(url);

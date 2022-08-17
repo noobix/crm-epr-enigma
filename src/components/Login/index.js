@@ -84,7 +84,6 @@ const Login = (props) => {
                     color: "rgb(29, 35, 102)",
                     fontSize: 20,
                   }}
-                  onPress={() => props.navigation.navigate("profile")}
                 >
                   redeem
                 </Text>
