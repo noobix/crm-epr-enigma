@@ -47,7 +47,6 @@ const Registeration = (props) => {
       if (!result.cancelled) {
         setimage(result.uri);
       }
-      // console.log(result)
     } catch (error) {
       console.log(error);
     }
@@ -56,7 +55,6 @@ const Registeration = (props) => {
     const [first, last] = fullname.split(" ");
     setfname(first);
     setlname(last);
-    // console.log("1221", fname, lname);
     const regdata = {
       userType: type,
       firstName: fname,

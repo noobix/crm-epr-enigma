@@ -5,12 +5,17 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import { auth } from "../../firebase/config";
 import { signOut } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import {
+  Ionicons,
+  Feather,
+  FontAwesome,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 const Profile = (props) => {
   const handlesignout = async () => {
     await signOut(auth);
@@ -34,60 +39,125 @@ const Profile = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <View style={styles.details}>
+        <View style={styles.profile}>
+          <TouchableOpacity onPress={() => props.navigation.goBack()}>
+            <Ionicons
+              style={{ marginLeft: 16 }}
+              name="arrow-back"
+              size={30}
+              color="black"
+            />
+          </TouchableOpacity>
+          <Feather
+            style={{ marginRight: 16 }}
+            name="edit-2"
+            size={25}
+            color="black"
+          />
+        </View>
+        <View style={styles.profilehead}>
+          <Image
+            style={{ width: 90, height: 90, borderRadius: 45, marginLeft: 16 }}
+            source={{ uri: props.route.params.image }}
+          />
+          <View style={{ justifyContent: "center", marginLeft: 10 }}>
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              {props.route.params.firstName} {props.route.params.lastName}
+            </Text>
+            <Text style={{ fontSize: 20, color: "rgb(169,169,169)" }}>
+              {props.route.params.email}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.pins}>
           <View style={{ flexDirection: "row", marginVertical: 10 }}>
-            <View style={styles.profilehead}>
-              <Image
-                style={styles.image}
-                source={{ uri: props.route.params.image }}
-              />
-              <View>
-                <View style={{ flexDirection: "row", marginVertical: 10 }}>
-                  <Text style={styles.textlabel}>Name</Text>
-                  <Text style={{ fontSize: 20 }}>
-                    {`${props.route.params.firstName} ${props.route.params.lastName}`}
-                  </Text>
-                </View>
-                <View style={{ flexDirection: "row" }}>
-                  <Text style={styles.textlabel}>Email</Text>
-                  <Text style={{ fontSize: 20 }}>
-                    {props.route.params.email}
-                  </Text>
-                </View>
-              </View>
-            </View>
+            <FontAwesome
+              name="transgender"
+              size={24}
+              color="rgb(105,105,105)"
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                marginBottom: 10,
+                color: "rgb(105,105,105)",
+                marginLeft: 10,
+                fontWeight: "500",
+              }}
+            >
+              {props.route.params.gender}
+            </Text>
           </View>
-          <View style={styles.profilebody}>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.textlabel}>Gender</Text>
-              <Text style={{ fontSize: 20, marginBottom: 10 }}>
-                {props.route.params.gender}
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.textlabel}>Date Of Birth</Text>
-              <Text style={{ fontSize: 20, marginBottom: 10 }}>
-                {dateofbirth}
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.textlabel}>Address</Text>
-              <Text style={{ fontSize: 20, marginBottom: 10 }}>
-                {props.route.params.address}
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.textlabel}>Phone</Text>
-              <Text style={{ fontSize: 20, marginBottom: 10 }}>
-                {props.route.params.phone}
-              </Text>
-            </View>
+          <View style={{ flexDirection: "row", marginVertical: 10 }}>
+            <Ionicons
+              name="ios-calendar-outline"
+              size={24}
+              color="rgb(105,105,105)"
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                marginBottom: 10,
+                color: "rgb(105,105,105)",
+                marginLeft: 10,
+                fontWeight: "500",
+              }}
+            >
+              {dateofbirth}
+            </Text>
           </View>
-          <TouchableWithoutFeedback onPress={() => handlesignout()}>
-            <View style={styles.button}>
-              <Text style={{ fontSize: 25, color: "white" }}>Log Out</Text>
-            </View>
-          </TouchableWithoutFeedback>
+          <View style={{ flexDirection: "row", marginVertical: 10 }}>
+            <SimpleLineIcons
+              name="location-pin"
+              size={24}
+              color="rgb(105,105,105)"
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                marginBottom: 10,
+                color: "rgb(105,105,105)",
+                marginLeft: 10,
+                fontWeight: "500",
+              }}
+            >
+              {props.route.params.address}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", marginVertical: 10 }}>
+            <Feather name="phone" size={24} color="rgb(105,105,105)" />
+            <Text
+              style={{
+                fontSize: 20,
+                marginBottom: 10,
+                color: "rgb(105,105,105)",
+                marginLeft: 10,
+                fontWeight: "500",
+              }}
+            >
+              {props.route.params.phone}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 10,
+          }}
+        >
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handlesignout()}
+          >
+            <Text style={{ fontSize: 35, color: "rgb(255,255,255)" }}>
+              Logout
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </React.Fragment>
@@ -100,38 +170,29 @@ const styles = StyleSheet.create({
     flex: 1,
     width: window.width,
     height: window.height,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgb(225,225,225)",
-  },
-  details: {
     backgroundColor: "rgb(255,255,255)",
-    width: "90%",
-    height: "80%",
+  },
+  profile: {
+    width: "100%",
+    height: "15%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "rgb(225,225,225)",
+    alignItems: "flex-end",
   },
   profilehead: {
     flexDirection: "row",
-    marginHorizontal: 10,
+    marginTop: 10,
   },
-  image: {
-    width: 90,
-    height: 90,
-  },
-  profilebody: {
-    marginHorizontal: 10,
-  },
-  textlabel: {
-    marginHorizontal: 5,
-    fontSize: 20,
-    textDecorationLine: "underline",
+  pins: {
+    marginHorizontal: 16,
+    marginTop: 30,
   },
   button: {
-    width: 100,
-    height: 60,
-    backgroundColor: "blue",
+    width: "90%",
+    height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 110,
-    marginVertical: 20,
+    backgroundColor: "rgb(109, 123, 175)",
   },
 });

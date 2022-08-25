@@ -1,31 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   Dimensions,
   ScrollView,
   Image,
+  TouchableWithoutFeedback,
 } from "react-native";
+import { Ionicons, Octicons, MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SelectDropdown from "react-native-select-dropdown";
-import { CaseEntery } from "../CaseEntery";
+import moment from "moment";
 import { firestore } from "../../firebase/config";
 import { storage } from "../../firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 const FindPatient = (props) => {
-  const data1 = [
-    { label: "Male", value: 1 },
-    { label: "Female", value: 2 },
-  ];
-  const [fname, setfname] = useState("");
   const [lname, setlname] = useState("");
+  const [fname, setfname] = useState("");
   const [gender, setgender] = useState(null);
   const [dataset, setdataset] = useState([]);
+  const dropdownref = useRef({});
   let searchString = "";
   if (fname !== "") {
     searchString += "f";
@@ -39,7 +38,7 @@ const FindPatient = (props) => {
   const reset = () => {
     setfname("");
     setlname("");
-    setgender(null);
+    dropdownref.current.reset();
     setdataset([]);
   };
   const singleSearchF = async () => {
@@ -52,8 +51,13 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const singleSearchL = async () => {
@@ -66,8 +70,13 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const singleSearchG = async () => {
@@ -80,8 +89,13 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const doubleSearchFL = async () => {
@@ -95,8 +109,13 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const doubleSearchFG = async () => {
@@ -110,8 +129,13 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const doubleSearchLG = async () => {
@@ -125,8 +149,13 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const allSearch = async () => {
@@ -141,71 +170,103 @@ const FindPatient = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
-      setdataset((dataset) => [{ ...obj, image: url }, ...dataset]);
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
     });
   };
   const searchConfig = () => {
     switch (searchString) {
       case "f":
-        singleSearchF();
         setdataset([]);
+        singleSearchF();
         break;
       case "l":
-        singleSearchL();
         setdataset([]);
+        singleSearchL();
         break;
       case "g":
-        singleSearchG();
         setdataset([]);
+        singleSearchG();
         break;
       case "fl" || "lf":
-        doubleSearchFL();
         setdataset([]);
+        doubleSearchFL();
         break;
       case "fg" || "gf":
-        doubleSearchFG();
         setdataset([]);
+        doubleSearchFG();
         break;
       case "lg" || "gl":
-        doubleSearchLG();
         setdataset([]);
+        doubleSearchLG();
         break;
       case "flg" || "lfg" || "glf" || "fgl" || "gfl" || "lgf":
-        allSearch();
         setdataset([]);
+        allSearch();
         break;
     }
   };
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <View style={styles.searcharea}>
-          <Text style={styles.headertext}>Enter search details</Text>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={styles.formlable}>First Name</Text>
+        <View style={styles.search}>
+          <TouchableOpacity onPress={() => props.navigation.goBack()}>
+            <Ionicons
+              style={{ marginLeft: 16 }}
+              name="arrow-back"
+              size={30}
+              color="black"
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.form}>
+          <View>
             <TextInput
-              style={styles.textinput}
-              placeholder="Enter First name here"
+              placeholder="Search first name"
+              style={{
+                width: 230,
+                height: 40,
+                backgroundColor: "rgb(255,255,255)",
+                fontSize: 20,
+                marginTop: 10,
+                borderWidth: 1,
+                borderColor: "rgb(109, 123, 175)",
+                padding: 5,
+              }}
               value={fname}
               onChangeText={(text) => setfname(text)}
             />
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={styles.formlable}>Last Name</Text>
             <TextInput
-              style={styles.textinput}
-              placeholder="Enter Last name here"
-              value={lname}
+              placeholder="Search last name"
+              style={{
+                width: 230,
+                height: 40,
+                backgroundColor: "rgb(255,255,255)",
+                fontSize: 20,
+                marginTop: 5,
+                borderWidth: 1,
+                borderColor: "rgb(109, 123, 175)",
+                padding: 5,
+              }}
               onChangeText={(text) => setlname(text)}
+              value={lname}
             />
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={styles.formlable}>Gender</Text>
             <SelectDropdown
               buttonStyle={{
                 height: 40,
+                backgroundColor: "rgb(255,255,255)",
+                marginTop: 5,
+                width: 230,
+                borderWidth: 1,
+                borderColor: "rgb(109, 123, 175)",
               }}
+              ref={dropdownref}
+              defaultButtonText="Select gender"
               data={["Male", "Female"]}
               onSelect={(selectedItem, index) => {
                 setgender(selectedItem);
@@ -218,70 +279,131 @@ const FindPatient = (props) => {
               }}
             />
           </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableWithoutFeedback onPress={() => searchConfig()}>
-              <View style={[styles.button, { marginLeft: 140 }]}>
-                <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
-                  Search
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => reset()}>
-              <View style={[styles.button, { marginLeft: 10 }]}>
-                <Text style={{ color: "rgb(255,255,255)", fontSize: 18 }}>
-                  Reset
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
+          <View
+            style={{ flexDirection: "column", marginTop: 10, marginLeft: 10 }}
+          >
+            <TouchableOpacity
+              style={{
+                marginBottom: 5,
+                width: 95,
+                height: 40,
+                backgroundColor: "rgb(255,255,255)",
+                borderWidth: 1,
+                borderColor: "rgb(109, 123, 175)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => reset()}
+            >
+              <MaterialIcons
+                name="clear"
+                size={40}
+                color="rgb(109, 123, 175)"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: 95,
+                height: 85,
+                backgroundColor: "rgb(109, 123, 175)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => searchConfig()}
+            >
+              <Ionicons name="search" size={60} color="rgb(255,255,255)" />
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.resultarea}>
-          <ScrollView>
-            {dataset &&
-              dataset.map(
-                (
-                  { firstName, lastName, dateOfBirth, gender, image, uid },
-                  index
-                ) => (
-                  <TouchableWithoutFeedback
-                    key={index}
-                    onPress={() =>
-                      props.navigation.navigate("caseentery", {
-                        name: `${firstName} ${lastName}`,
-                        uid: uid,
-                      })
-                    }
+        <ScrollView>
+          {dataset &&
+            dataset.map(
+              (
+                { firstName, lastName, formatedDate, gender, image, uid },
+                index
+              ) => (
+                <TouchableWithoutFeedback
+                  key={index}
+                  onPress={() =>
+                    props.navigation.navigate("caselist", {
+                      name: `${firstName} ${lastName}`,
+                      uid: uid,
+                    })
+                  }
+                >
+                  <View
+                    onStartShouldSetResponder={() => true}
+                    style={{
+                      marginVertical: 10,
+                      borderWidth: 1,
+                      borderColor: "rgb(109, 123, 175)",
+                      width: "100%",
+                      height: 150,
+                      backgroundColor: "rgb(225,225,225)",
+                      flexDirection: "row",
+                    }}
                   >
-                    <View
-                      onStartShouldSetResponder={() => true}
-                      style={{ flexDirection: "row", flex: 0.3 }}
-                    >
-                      <Image
-                        style={{ width: 90, height: 90 }}
-                        source={{ uri: image }}
-                      />
-                      <View>
-                        <View style={{ flexDirection: "row" }}>
-                          <Text>Name</Text>
-                          <Text>
-                            {firstName} {lastName}
-                          </Text>
-                        </View>
-                        <View style={{ flexDirection: "row" }}>
-                          <Text>Date Of Birth</Text>
-                          <Text>{dateOfBirth}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row" }}>
-                          <Text>Gender</Text>
-                          <Text>{gender}</Text>
-                        </View>
+                    <Image
+                      source={{ uri: image }}
+                      style={{ width: 130, height: 130, marginTop: 10 }}
+                    />
+                    <View style={{ marginHorizontal: 10 }}>
+                      <View style={{ flexDirection: "row", marginTop: 10 }}>
+                        <Octicons
+                          name="dot"
+                          size={25}
+                          color="rgb(109, 123, 175)"
+                        />
+                        <Text
+                          style={{
+                            marginLeft: 5,
+                            alignSelf: "center",
+                            fontSize: 25,
+                          }}
+                        >
+                          {firstName} {lastName}
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: "row", marginTop: 10 }}>
+                        <Octicons
+                          name="dot"
+                          size={24}
+                          color="rgb(109, 123, 175)"
+                        />
+                        <Text
+                          style={{
+                            marginLeft: 5,
+                            alignSelf: "center",
+                            fontSize: 20,
+                            color: "rgb(112,128,144)",
+                          }}
+                        >
+                          {formatedDate}
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: "row", marginTop: 10 }}>
+                        <Octicons
+                          name="dot"
+                          size={20}
+                          color="rgb(109, 123, 175)"
+                        />
+                        <Text
+                          style={{
+                            marginLeft: 5,
+                            alignSelf: "center",
+                            fontSize: 20,
+                            color: "rgb(112,128,144)",
+                          }}
+                        >
+                          {gender}
+                        </Text>
                       </View>
                     </View>
-                  </TouchableWithoutFeedback>
-                )
-              )}
-          </ScrollView>
-        </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              )
+            )}
+        </ScrollView>
       </SafeAreaView>
     </React.Fragment>
   );
@@ -291,58 +413,21 @@ const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
     width: window.width,
     height: window.height,
+    backgroundColor: "rgb(255,255,255)",
+  },
+  search: {
+    width: "100%",
+    height: "15%",
     backgroundColor: "rgb(225,225,225)",
-    alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
-  searcharea: {
+  form: {
+    paddingHorizontal: 16,
+    backgroundColor: "rgb(245,245,245)",
     width: "100%",
-    height: "35%",
-    backgroundColor: "rgb(255,255,255)",
-    marginBottom: 2.0,
-    borderRadius: 15,
-  },
-  resultarea: {
-    width: "100%",
-    height: "60%",
-    backgroundColor: "rgb(255,255,255)",
-    marginTop: 2.0,
-    borderRadius: 15,
-  },
-  formlable: {
-    fontSize: 18,
-    alignSelf: "center",
-    marginHorizontal: 10,
-  },
-  textinput: {
-    borderBottomWidth: 2,
-    borderBottomColor: "rgb(255, 176, 177)",
-    color: "rgb(29, 35, 102)",
-    fontSize: 20,
-    width: 200,
-    height: 40,
-  },
-  dropdown: {
-    backgroundColor: "white",
-    borderBottomColor: "rgb(255, 176, 177)",
-    borderBottomWidth: 2,
-    width: 150,
-  },
-  headertext: {
-    fontSize: 30,
-    textDecorationLine: "underline",
-    marginTop: 5,
-    marginLeft: 20,
-  },
-  button: {
-    height: 40,
-    width: 80,
-    backgroundColor: "rgb(108, 99, 255)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
+    height: "25%",
+    flexDirection: "row",
   },
 });
