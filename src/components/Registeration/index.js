@@ -104,7 +104,6 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
@@ -135,7 +134,6 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
@@ -158,7 +156,6 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
@@ -181,12 +178,20 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
+                  justifyContent: "center",
                 }}
                 onPress={() => showDatepicker()}
               >
-                <Text style={styles.formlable}>Select Date</Text>
+                <Text
+                  style={{
+                    color: COLORS.grey,
+                    alignSelf: "center",
+                    fontSize: 22,
+                  }}
+                >
+                  Select date
+                </Text>
               </TouchableOpacity>
               {show && (
                 <DateTimePicker
@@ -273,7 +278,7 @@ const Registeration = (props) => {
                 height: 55,
                 width: "100%",
                 backgroundColor: COLORS.blue,
-                marginVertical: 20,
+                marginVertical: 40,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -346,6 +351,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(108, 99, 255)",
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 5,
   },
   submitbtm: {
     width: 150,
