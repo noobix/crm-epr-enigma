@@ -39,7 +39,6 @@ const Registeration = (props) => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        presentationStyle: 0,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -47,7 +46,6 @@ const Registeration = (props) => {
       if (!result.cancelled) {
         setimage(result.uri);
       }
-      // console.log(result)
     } catch (error) {
       console.log(error);
     }
@@ -56,7 +54,6 @@ const Registeration = (props) => {
     const [first, last] = fullname.split(" ");
     setfname(first);
     setlname(last);
-    // console.log("1221", fname, lname);
     const regdata = {
       userType: type,
       firstName: fname,
@@ -77,10 +74,7 @@ const Registeration = (props) => {
     dispatch(registerUser({ email, password, regdata, image }));
     props.navigation.navigate("login");
   };
-  // const today = new Date();
-  // const tday = zeroPad(today.getDate(), 2);
-  // const tmonth = zeroPad(today.getMonth() + 1, 2);
-  // const tyear = today.getFullYear();
+
   const [show, setshow] = useState(false);
   const [mode, setmode] = useState(null);
   const [gender, setgender] = useState(null);
@@ -103,13 +97,15 @@ const Registeration = (props) => {
         <KeyboardAwareScrollView>
           <View style={styles.formcontainer}>
             <Text style={styles.intotext}>Registration</Text>
-            <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View style={{ marginTop: 10 }}>
               <Text style={styles.formlable}>Type</Text>
               <SelectDropdown
                 buttonStyle={{
                   backgroundColor: COLORS.light,
                   height: 40,
-                  width: 300,
+                  paddingHorizontal: 15,
+                  borderWidth: 0.5,
+                  width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
                 data={["Patient", "Doctor", "Nurse"]}
@@ -124,24 +120,7 @@ const Registeration = (props) => {
                 }}
               />
             </View>
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>First Name</Text>
-              <TextInput
-                style={styles.textinput}
-                placeholder="Enter First name here"
-                value={fname}
-                onChangeText={(text) => setfname(text)}
-              />
-            </View>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>Last Name</Text>
-              <TextInput
-                style={styles.textinput}
-                placeholder="Enter Last name here"
-                value={lname}
-                onChangeText={(text) => setlname(text)}
-              />
-            </View> */}
+
             <Input
               onChangeText={(text) => setfullname(text)}
               iconName="account-outline"
@@ -149,13 +128,15 @@ const Registeration = (props) => {
               value={fullname}
               placeholder="Enter your full name"
             />
-            <View style={{ flexDirection: "row" }}>
+            <View>
               <Text style={styles.formlable}>Gender</Text>
               <SelectDropdown
                 buttonStyle={{
                   backgroundColor: COLORS.light,
                   height: 40,
-                  width: 290,
+                  paddingHorizontal: 15,
+                  borderWidth: 0.5,
+                  width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
                 data={["Male", "Female"]}
@@ -170,13 +151,15 @@ const Registeration = (props) => {
                 }}
               />
             </View>
-            <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View style={{ marginTop: 10 }}>
               <Text style={styles.formlable}>Marital Status</Text>
               <SelectDropdown
                 buttonStyle={{
                   backgroundColor: COLORS.light,
                   height: 40,
-                  width: 250,
+                  paddingHorizontal: 15,
+                  borderWidth: 0.5,
+                  width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
                 data={["Single", "Married", "Divorced", "Separated"]}
@@ -191,17 +174,19 @@ const Registeration = (props) => {
                 }}
               />
             </View>
-            <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View style={{ marginTop: 10 }}>
               <Text style={styles.formlable}>Date of Birth</Text>
               <TouchableOpacity
                 style={{
                   backgroundColor: COLORS.light,
-                  width: 200,
                   height: 40,
+                  paddingHorizontal: 15,
+                  borderWidth: 0.5,
+                  width: 370,
                 }}
                 onPress={() => showDatepicker()}
               >
-                <Text>Select Date</Text>
+                <Text style={styles.formlable}>Select Date</Text>
               </TouchableOpacity>
               {show && (
                 <DateTimePicker
@@ -213,101 +198,45 @@ const Registeration = (props) => {
                 />
               )}
             </View>
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>Address</Text>
-              <TextInput
-                style={styles.textinput}
-                placeholder="Enter Address here"
-                value={address}
-                onChangeText={(text) => setaddress(text)}
-              />
-            </View> */}
+
             <Input
               onChangeText={(text) => setaddress(text)}
-              // onFocus={() => handleError(null, 'phone')}
               iconName="home-outline"
               label="Address"
               value={address}
               placeholder="Enter Address here"
             />
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>Phone</Text>
-              <TextInput
-                style={styles.textinput}
-                placeholder="Enter Phone Number here"
-                keyboardType="phone-pad"
-                value={phone}
-                onChangeText={(text) => setphone(text)}
-              />
-            </View> */}
+
             <Input
               keyboardType="numeric"
               onChangeText={(text) => setphone(text)}
-              // onFocus={() => handleError(null, 'phone')}
               iconName="phone-outline"
               label="Phone Number"
               value={phone}
               placeholder="Enter your phone number"
-              // error={errors.phone}
             />
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>Email</Text>
-              <TextInput
-                style={styles.textinput}
-                placeholder="Enter Email here"
-                value={email}
-                keyboardType="email-address"
-                onChangeText={(text) => setemail(text)}
-              />
-            </View> */}
 
             <Input
               onChangeText={(text) => setemail(text)}
-              // onFocus={() => handleError(null, 'email')}
               iconName="email-outline"
               label="Email"
               value={email}
               placeholder="Enter your email address"
-              // error={errors.email}
             />
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>Password</Text>
-              <TextInput
-                style={styles.textinput}
-                placeholder="Enter Password here"
-                secureTextEntry
-                value={password}
-                onChangeText={(text) => setpassword(text)}
-              />
-            </View> */}
             <Input
               onChangeText={(text) => setpassword(text)}
-              // onFocus={() => handleError(null, 'password')}
               iconName="lock-outline"
               label="Password"
               value={password}
               placeholder="Enter your password"
-              // error={errors.password}
               password
             />
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={styles.formlable}>Password</Text>
-              <TextInput
-                style={styles.textinput}
-                secureTextEntry
-                placeholder="Confirm Password here"
-                value={cpassword}
-                onChangeText={(text) => setcpassword(text)}
-              />
-            </View> */}
             <Input
               onChangeText={(text) => setcpassword(text)}
-              // onFocus={() => handleError(null, 'password')}
               iconName="lock-outline"
               label="Confirm Password"
               value={cpassword}
               placeholder=" Confirm your password"
-              // error={errors.password}
               password
             />
             <View style={{ flexDirection: "row", marginTop: 10 }}>
@@ -337,13 +266,6 @@ const Registeration = (props) => {
                 )}
               </TouchableWithoutFeedback>
             </View>
-            {/* <TouchableWithoutFeedback onPress={() => handleReg()}>
-              <View style={styles.submitbtm}>
-                <Text style={{ fontSize: 30, color: "rgb(255,255,255)" }}>
-                  Submit
-                </Text>
-              </View>
-            </TouchableWithoutFeedback> */}
             <TouchableOpacity
               onPress={() => handleReg()}
               activeOpacity={0.7}
@@ -396,9 +318,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   formlable: {
-    fontSize: 18,
-    alignSelf: "center",
-    marginHorizontal: 10,
+    // fontSize: 18,
+    // alignSelf: "center",
+    // marginHorizontal: 10,
+    marginVertical: 5,
+    fontSize: 14,
+    color: COLORS.grey,
   },
   textinput: {
     borderBottomWidth: 2,

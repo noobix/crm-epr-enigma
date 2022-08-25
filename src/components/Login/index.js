@@ -11,6 +11,10 @@ import { useDispatch } from "react-redux";
 import { LoginIntroImage } from "./LoginIntroImage";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { signInUser } from "../../store/userSlice";
+import { login } from "../../store/authSlice";
+import { useNavigation } from "@react-navigation/native";
+import COLORS from "../Registeration/colors";
+import Input from "../Registeration/input";
 
 const Login = (props) => {
   const [email, setemail] = useState("");
@@ -29,69 +33,76 @@ const Login = (props) => {
           <View style={styles.intoimage}>
             <LoginIntroImage />
           </View>
-          <View style={styles.form}>
-            <View style={styles.inputpatient}>
-              <Text style={styles.textlabel}>Email</Text>
-              <TextInput
-                placeholder="Enter Your Patient ID here"
-                value={email}
-                onChangeText={(text) => setemail(text)}
-                keyboardType="email-address"
-                style={[styles.textinput, { marginLeft: 30 }]}
-              />
-            </View>
-            <View style={styles.inputpassword}>
-              <Text style={styles.textlabel}>Password</Text>
-              <TextInput
-                placeholder="Enter Your Password here"
-                value={password}
-                onChangeText={(text) => setpassword(text)}
-                style={styles.textinput}
-                secureTextEntry
-              />
-            </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleSignIn()}
+
+          <Input
+            onChangeText={(text) => setemail(text)}
+            iconName="email-outline"
+            label="Email"
+            value={email}
+            placeholder="Enter your email address"
+          />
+
+          <Input
+            onChangeText={(text) => setpassword(text)}
+            iconName="lock-outline"
+            label="Password"
+            value={password}
+            placeholder="Enter your password"
+            password
+          />
+
+          <TouchableOpacity
+            onPress={handleSignIn}
+            activeOpacity={0.7}
+            style={{
+              height: 55,
+              width: "100%",
+              backgroundColor: COLORS.blue,
+              marginVertical: 20,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: COLORS.white,
+                fontWeight: "bold",
+                fontSize: 18,
+              }}
             >
-              <MaterialCommunityIcons
-                name="send"
-                size={30}
-                color="white"
-                style={{ paddingHorizontal: 20 }}
-              />
-              <Text style={styles.textbutton}>Submit</Text>
-            </TouchableOpacity>
-            <View>
-              <Text style={{ fontSize: 14, marginVertical: 5 }}>
-                Don't have an account, press{" "}
-                <Text
-                  style={{
-                    textDecorationLine: "underline",
-                    color: "rgb(29, 35, 102)",
-                    fontSize: 20,
-                  }}
-                  onPress={() => props.navigation.navigate("registerpatient")}
-                >
-                  register
-                </Text>
-              </Text>
-              <Text style={{ fontSize: 14, marginVertical: 5 }}>
-                Forgot password?, press{" "}
-                <Text
-                  style={{
-                    textDecorationLine: "underline",
-                    color: "rgb(29, 35, 102)",
-                    fontSize: 20,
-                  }}
-                >
-                  redeem
-                </Text>
-              </Text>
-              <View style={{ flexDirection: "row", marginVertical: 5 }}>
-                <Text style={styles.helptext}>Help</Text>
-                <Ionicons name="help-circle-outline" size={30} color="black" />
-              </View>
+              Submit
+            </Text>
+          </TouchableOpacity>
+          <View>
+            <Text style={{ fontSize: 14, marginVertical: 5 }}>
+              Don't have an account, press{" "}
+              <Text
+                style={{
+                  textDecorationLine: "underline",
+                  color: "rgb(29, 35, 102)",
+                }}
+                onPress={() => props.navigation.navigate("registerpatient")}
+              >
+                here
+              </Text>{" "}
+              to register
+            </Text>
+            <Text style={{ fontSize: 14, marginVertical: 5 }}>
+              Forgot password?, press{" "}
+              <Text
+                style={{
+                  textDecorationLine: "underline",
+                  color: "rgb(29, 35, 102)",
+                }}
+                onPress={() => props.navigation.navigate("profile")}
+              >
+                here
+              </Text>{" "}
+              to redeem
+            </Text>
+            <View style={{ flexDirection: "row", marginVertical: 5 }}>
+              <Text style={styles.helptext}>Help</Text>
+              <Ionicons name="help-circle-outline" size={30} color="black" />
             </View>
           </View>
         </View>
