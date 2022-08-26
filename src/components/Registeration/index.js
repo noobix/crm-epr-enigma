@@ -17,6 +17,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { registerUser } from "../../store/userSlice";
 import * as ImagePicker from "expo-image-picker";
+import moment from "moment";
 
 const Registeration = (props) => {
   const onChangeDate = (event, selectedDate) => {
@@ -28,6 +29,11 @@ const Registeration = (props) => {
     }
     setdate(currentDate.toLocaleString());
   };
+  useEffect(() => {
+    if (moment(date) !== moment()) {
+      setbirthday(moment(date).format("MMM DD YYYY"));
+    }
+  }, [date]);
   const showMode = (currentMode) => {
     setshow(true);
     setmode(currentMode);
@@ -84,6 +90,7 @@ const Registeration = (props) => {
   const [status, setstatus] = useState(null);
   const [type, settype] = useState(null);
   const [date, setdate] = useState(new Date());
+  const [birthday, setbirthday] = useState(null);
   const [fname, setfname] = useState("");
   const [lname, setlname] = useState("");
   const [fullname, setfullname] = useState("");
@@ -193,7 +200,11 @@ const Registeration = (props) => {
                     fontSize: 22,
                   }}
                 >
-                  Select date
+                  {birthday ? (
+                    <Text>{birthday}</Text>
+                  ) : (
+                    <Text>Select date</Text>
+                  )}
                 </Text>
               </TouchableOpacity>
               {show && (
@@ -322,6 +333,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 20,
     fontWeight: "bold",
+    color: "rgb(105,105,105)",
     textDecorationLine: "underline",
     textAlign: "center",
   },

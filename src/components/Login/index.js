@@ -23,7 +23,7 @@ const Login = (props) => {
   const handleSignIn = () => {
     if (email === "") return;
     if (password === "") return;
-    const details = { email, password };
+    const details = { email: email.trim(), password: password };
     dispatch(signInUser(details));
   };
   return (
