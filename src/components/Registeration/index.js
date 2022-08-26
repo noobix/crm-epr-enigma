@@ -68,8 +68,6 @@ const Registeration = (props) => {
       phone: phone,
       email: email.trim(),
     };
-    console.log(regdata);
-    console.log(password, cpassword, fname, lname, type, gender, status, email);
     if (password !== cpassword) return;
     if (fname === "") return;
     if (lname === "") return;
