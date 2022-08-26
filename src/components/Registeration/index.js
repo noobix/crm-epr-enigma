@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Button,
@@ -39,6 +39,7 @@ const Registeration = (props) => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        presentationStyle: 0,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -50,10 +51,12 @@ const Registeration = (props) => {
       console.log(error);
     }
   };
-  const handleReg = () => {
+  useEffect(() => {
     const [first, last] = fullname.split(" ");
     setfname(first);
     setlname(last);
+  }, [fullname]);
+  const handleReg = () => {
     const regdata = {
       userType: type,
       firstName: fname,
