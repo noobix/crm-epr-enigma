@@ -375,7 +375,9 @@ const CaseList = (props) => {
                                   marginLeft: 3,
                                 }}
                               >
-                                {moment(date).format("dddd MMM Do YY")}
+                                {moment(new Date(date)).format(
+                                  "dddd MMM Do YY"
+                                )}
                               </Text>
                             </View>
                           </View>

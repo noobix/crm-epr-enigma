@@ -9,7 +9,12 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  Octicons,
+  MaterialCommunityIcons,
+  Feather,
+} from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase/config";
@@ -61,7 +66,7 @@ const DoctorHome = (props) => {
             <Ionicons
               name="ios-notifications-outline"
               size={40}
-              color="rgb(173,255,47)"
+              color="rgb(255,255,255)"
             />
           </TouchableOpacity>
         </View>
@@ -82,7 +87,115 @@ const DoctorHome = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.menu}></View>
+        <View style={styles.menu}>
+          <View style={{ flexDirection: "row", marginTop: 5 }}>
+            <View
+              style={{
+                width: 80,
+                height: 60,
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+                backgroundColor: "rgb(140, 129, 150)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Octicons
+                name="comment-discussion"
+                size={35}
+                color="rgb(225,225,225)"
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                width: 243,
+                height: 60,
+                alignItems: "center",
+                justifyContent: "center",
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                backgroundColor: "rgb(162, 142, 169)",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                8 messages in your chat
+              </Text>
+              <Text style={{ fontSize: 15, fontStyle: "italic" }}>
+                4 chats have not responded
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View
+              style={{
+                width: 80,
+                height: 60,
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+                backgroundColor: "rgb(140, 129, 150)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="car-emergency"
+                size={35}
+                color="rgb(225,225,225)"
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                width: 243,
+                height: 60,
+                alignItems: "center",
+                justifyContent: "center",
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                backgroundColor: "rgb(162, 142, 169)",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                6 emergencies came in
+              </Text>
+              <Text style={{ fontSize: 15, fontStyle: "italic" }}>
+                1 booked to your clinic
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View
+              style={{
+                width: 80,
+                height: 60,
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+                backgroundColor: "rgb(140, 129, 150)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Feather name="activity" size={35} color="rgb(225,225,225)" />
+            </View>
+            <TouchableOpacity
+              style={{
+                width: 243,
+                height: 60,
+                alignItems: "center",
+                justifyContent: "center",
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                backgroundColor: "rgb(162, 142, 169)",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                0 patients for observation
+              </Text>
+              <Text style={{ fontSize: 15, fontStyle: "italic" }}>
+                0 patients transfered for observation
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </SafeAreaView>
     </React.Fragment>
   );
@@ -120,7 +233,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "rgb(138,43,226)",
+    backgroundColor: "rgb(109, 123, 175)",
     position: "absolute",
     right: 110,
     bottom: -20,
@@ -131,10 +244,10 @@ const styles = StyleSheet.create({
   },
   menu: {
     width: "90%",
-    height: "30%",
+    height: "40%",
     backgroundColor: "rgb(245,245,245)",
     position: "absolute",
-    bottom: 40,
+    bottom: 20,
     right: 20,
   },
   button: {

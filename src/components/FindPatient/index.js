@@ -52,7 +52,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
@@ -71,7 +71,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
@@ -90,7 +90,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
@@ -110,7 +110,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
@@ -130,7 +130,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
@@ -150,7 +150,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
@@ -171,7 +171,7 @@ const FindPatient = (props) => {
     querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
       const { dateOfBirth } = obj;
-      const formateddate = moment(dateOfBirth).format("MMMM DD YYYY");
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
       const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
       setdataset((dataset) => [
         { ...obj, image: url, formatedDate: formateddate },
