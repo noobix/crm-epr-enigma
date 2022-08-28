@@ -91,6 +91,129 @@ const CaseList = (props) => {
       ]);
     });
   }
+  const rendercases = (
+    status,
+    doctor,
+    date,
+    casetype,
+    name,
+    diagnosis,
+    id,
+    index
+  ) => (
+    <TouchableOpacity
+      key={index}
+      onPress={() =>
+        props.navigation.navigate("replyfeedback", {
+          status,
+          diagnosis,
+          date,
+          casetype,
+          id,
+          name,
+        })
+      }
+    >
+      <View
+        style={{
+          height: 120,
+          marginVertical: 10,
+          backgroundColor: "rgb(245,245,245)",
+          paddingLeft: 10,
+          flexDirection: "row",
+        }}
+      >
+        <View style={{ marginTop: 5 }}>
+          <View style={{ flexDirection: "row" }}>
+            <MaterialIcons
+              name="person-outline"
+              size={30}
+              color="rgb(119,136,153)"
+            />
+            <Text
+              style={{
+                fontSize: 18,
+                alignSelf: "center",
+                fontWeight: "500",
+              }}
+            >
+              {name}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Ionicons name="options" size={30} color="rgb(119,136,153)" />
+            <Text
+              style={{
+                fontSize: 15,
+                alignSelf: "center",
+                marginLeft: 3,
+              }}
+            >
+              {casetype}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Fontisto name="date" size={30} color="rgb(119,136,153)" />
+            <Text
+              style={{
+                fontSize: 15,
+                alignSelf: "center",
+                marginLeft: 3,
+              }}
+            >
+              {moment(new Date(date)).format("dddd MMM Do YY")}
+            </Text>
+          </View>
+        </View>
+        <View style={{ marginTop: 5, marginLeft: 10 }}>
+          <View style={{ flexDirection: "row" }}>
+            <Fontisto name="doctor" size={30} color="rgb(119,136,153)" />
+            <Text
+              style={{
+                fontSize: 18,
+                alignSelf: "center",
+                marginLeft: 3,
+              }}
+            >
+              {doctor}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Ionicons
+              name="information-circle"
+              size={30}
+              color="rgb(119,136,153)"
+            />
+            <Text
+              style={{
+                fontSize: 15,
+                alignSelf: "center",
+                marginLeft: 3,
+              }}
+            >
+              {diagnosis}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <MaterialCommunityIcons
+              name="list-status"
+              size={30}
+              color="rgb(119,136,153)"
+            />
+            <Text
+              style={{
+                fontSize: 15,
+                alignSelf: "center",
+                marginLeft: 3,
+              }}
+            >
+              {status}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -143,7 +266,7 @@ const CaseList = (props) => {
                   size={30}
                   color="rgb(105,105,105)"
                 />
-                <Text style={{ fontSize: 22, marginLeft: 10 }}>
+                <Text style={{ fontSize: 24, marginLeft: 10 }}>
                   {props.route.params.name}
                 </Text>
               </View>
@@ -155,10 +278,14 @@ const CaseList = (props) => {
                   size={30}
                   color="rgb(105,105,105)"
                 />
-                <Text style={{ fontSize: 22, marginLeft: 10 }}>{doctor}</Text>
+                <Text style={{ fontSize: 24, marginLeft: 10 }}>{doctor}</Text>
               </View>
               <View
-                style={{ flexDirection: "row", marginTop: 10, marginLeft: 10 }}
+                style={{
+                  flexDirection: "row",
+                  marginTop: 30,
+                  marginLeft: 10,
+                }}
               >
                 <Fontisto name="date" size={30} color="rgb(105,105,105)" />
                 <TouchableOpacity
@@ -169,7 +296,9 @@ const CaseList = (props) => {
                   }}
                   onPress={() => showDatepicker()}
                 >
-                  <Text style={{ fontSize: 22 }}>Select Date</Text>
+                  <Text style={{ fontSize: 24, color: "rgb(128,128,128)" }}>
+                    Select Date
+                  </Text>
                 </TouchableOpacity>
                 {show && (
                   <DateTimePicker
@@ -268,7 +397,7 @@ const CaseList = (props) => {
                 <TouchableOpacity
                   style={{
                     width: 120,
-                    height: 60,
+                    height: 50,
                     backgroundColor: "rgb(109, 123, 175)",
                     justifyContent: "center",
                     alignItems: "center",
@@ -283,7 +412,7 @@ const CaseList = (props) => {
                   onPress={() => handleCreateCase()}
                   style={{
                     width: 120,
-                    height: 60,
+                    height: 50,
                     backgroundColor: "rgb(109, 123, 175)",
                     justifyContent: "center",
                     alignItems: "center",
@@ -306,134 +435,17 @@ const CaseList = (props) => {
                     (
                       { status, doctor, date, casetype, name, diagnosis, id },
                       index
-                    ) => (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() =>
-                          props.navigation.navigate("replyfeedback", {
-                            status,
-                            doctor,
-                            date,
-                            casetype,
-                            id,
-                            name,
-                          })
-                        }
-                      >
-                        <View
-                          style={{
-                            height: 120,
-                            marginVertical: 10,
-                            backgroundColor: "rgb(245,245,245)",
-                            paddingLeft: 10,
-                            flexDirection: "row",
-                          }}
-                        >
-                          <View style={{ marginTop: 5 }}>
-                            <View style={{ flexDirection: "row" }}>
-                              <MaterialIcons
-                                name="person-outline"
-                                size={30}
-                                color="rgb(119,136,153)"
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  alignSelf: "center",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                {name}
-                              </Text>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                              <Ionicons
-                                name="options"
-                                size={30}
-                                color="rgb(119,136,153)"
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  alignSelf: "center",
-                                  marginLeft: 3,
-                                }}
-                              >
-                                {casetype}
-                              </Text>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                              <Fontisto
-                                name="date"
-                                size={30}
-                                color="rgb(119,136,153)"
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  alignSelf: "center",
-                                  marginLeft: 3,
-                                }}
-                              >
-                                {moment(new Date(date)).format(
-                                  "dddd MMM Do YY"
-                                )}
-                              </Text>
-                            </View>
-                          </View>
-                          <View style={{ marginTop: 5, marginLeft: 10 }}>
-                            <View style={{ flexDirection: "row" }}>
-                              <Fontisto
-                                name="doctor"
-                                size={30}
-                                color="rgb(119,136,153)"
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 18,
-                                  alignSelf: "center",
-                                  marginLeft: 3,
-                                }}
-                              >
-                                {doctor}
-                              </Text>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                              <Ionicons
-                                name="information-circle"
-                                size={30}
-                                color="rgb(119,136,153)"
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  alignSelf: "center",
-                                  marginLeft: 3,
-                                }}
-                              >
-                                {diagnosis}
-                              </Text>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                              <MaterialCommunityIcons
-                                name="list-status"
-                                size={30}
-                                color="rgb(119,136,153)"
-                              />
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  alignSelf: "center",
-                                  marginLeft: 3,
-                                }}
-                              >
-                                {status}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                    )
+                    ) =>
+                      rendercases(
+                        status,
+                        doctor,
+                        date,
+                        casetype,
+                        name,
+                        diagnosis,
+                        id,
+                        index
+                      )
                   )}
             </ScrollView>
           )}
