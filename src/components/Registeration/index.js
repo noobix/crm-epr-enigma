@@ -327,9 +327,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   formlable: {
-    // fontSize: 18,
-    // alignSelf: "center",
-    // marginHorizontal: 10,
     marginVertical: 5,
     fontSize: 14,
     color: COLORS.grey,
