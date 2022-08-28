@@ -23,7 +23,7 @@ const Login = (props) => {
   const handleSignIn = () => {
     if (email === "") return;
     if (password === "") return;
-    const details = { email, password };
+    const details = { email: email.trim(), password: password };
     dispatch(signInUser(details));
   };
   return (
@@ -52,7 +52,7 @@ const Login = (props) => {
           />
 
           <TouchableOpacity
-            onPress={handleSignIn}
+            onPress={() => handleSignIn()}
             activeOpacity={0.7}
             style={{
               height: 55,
@@ -80,27 +80,26 @@ const Login = (props) => {
                 style={{
                   textDecorationLine: "underline",
                   color: "rgb(29, 35, 102)",
+                  fontSize: 18,
                 }}
                 onPress={() => props.navigation.navigate("registerpatient")}
               >
-                here
-              </Text>{" "}
-              to register
+                Register
+              </Text>
             </Text>
-            <Text style={{ fontSize: 14, marginVertical: 5 }}>
+            <Text style={{ fontSize: 14, marginTop: 10 }}>
               Forgot password?, press{" "}
               <Text
                 style={{
                   textDecorationLine: "underline",
                   color: "rgb(29, 35, 102)",
+                  fontSize: 18,
                 }}
-                onPress={() => props.navigation.navigate("profile")}
               >
-                here
-              </Text>{" "}
-              to redeem
+                redeem
+              </Text>
             </Text>
-            <View style={{ flexDirection: "row", marginVertical: 5 }}>
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
               <Text style={styles.helptext}>Help</Text>
               <Ionicons name="help-circle-outline" size={30} color="black" />
             </View>

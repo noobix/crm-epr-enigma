@@ -26,3 +26,16 @@ export const savePatientFeedback = createAsyncThunk(
     }
   }
 );
+export const saveDoctorReply = createAsyncThunk(
+  "brook/saveDoctorReply",
+  async (rMessage) => {
+    try {
+      const date = new Date().toLocaleString();
+      const control = { ...rMessage, date: date };
+      const ref = collection(firestore, "feedreply");
+      await addDoc(ref, control);
+    } catch (lsq) {
+      console.log(lsq);
+    }
+  }
+);

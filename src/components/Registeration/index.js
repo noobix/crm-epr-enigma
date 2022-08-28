@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Button,
@@ -17,6 +17,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { registerUser } from "../../store/userSlice";
 import * as ImagePicker from "expo-image-picker";
+import moment from "moment";
 
 const Registeration = (props) => {
   const onChangeDate = (event, selectedDate) => {
@@ -28,6 +29,11 @@ const Registeration = (props) => {
     }
     setdate(currentDate.toLocaleString());
   };
+  useEffect(() => {
+    if (moment(date) !== moment()) {
+      setbirthday(moment(date).format("MMM DD YYYY"));
+    }
+  }, [date]);
   const showMode = (currentMode) => {
     setshow(true);
     setmode(currentMode);
@@ -39,6 +45,7 @@ const Registeration = (props) => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        presentationStyle: 0,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -50,10 +57,12 @@ const Registeration = (props) => {
       console.log(error);
     }
   };
-  const handleReg = () => {
+  useEffect(() => {
     const [first, last] = fullname.split(" ");
     setfname(first);
     setlname(last);
+  }, [fullname]);
+  const handleReg = () => {
     const regdata = {
       userType: type,
       firstName: fname,
@@ -63,7 +72,7 @@ const Registeration = (props) => {
       dateOfBirth: date,
       address: address,
       phone: phone,
-      email: email,
+      email: email.trim(),
     };
     if (password !== cpassword) return;
     if (fname === "") return;
@@ -81,6 +90,7 @@ const Registeration = (props) => {
   const [status, setstatus] = useState(null);
   const [type, settype] = useState(null);
   const [date, setdate] = useState(new Date());
+  const [birthday, setbirthday] = useState(null);
   const [fname, setfname] = useState("");
   const [lname, setlname] = useState("");
   const [fullname, setfullname] = useState("");
@@ -104,7 +114,6 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
@@ -135,7 +144,6 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
@@ -158,7 +166,6 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
                 }}
                 buttonTextStyle={{ color: COLORS.grey }}
@@ -181,12 +188,24 @@ const Registeration = (props) => {
                   backgroundColor: COLORS.light,
                   height: 40,
                   paddingHorizontal: 15,
-                  borderWidth: 0.5,
                   width: 370,
+                  justifyContent: "center",
                 }}
                 onPress={() => showDatepicker()}
               >
-                <Text style={styles.formlable}>Select Date</Text>
+                <Text
+                  style={{
+                    color: COLORS.grey,
+                    alignSelf: "center",
+                    fontSize: 22,
+                  }}
+                >
+                  {birthday ? (
+                    <Text>{birthday}</Text>
+                  ) : (
+                    <Text>Select date</Text>
+                  )}
+                </Text>
               </TouchableOpacity>
               {show && (
                 <DateTimePicker
@@ -273,7 +292,7 @@ const Registeration = (props) => {
                 height: 55,
                 width: "100%",
                 backgroundColor: COLORS.blue,
-                marginVertical: 20,
+                marginVertical: 40,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -314,6 +333,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 20,
     fontWeight: "bold",
+    color: "rgb(105,105,105)",
     textDecorationLine: "underline",
     textAlign: "center",
   },
@@ -343,6 +363,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(108, 99, 255)",
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 5,
   },
   submitbtm: {
     width: 150,

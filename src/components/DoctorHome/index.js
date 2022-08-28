@@ -3,17 +3,16 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableWithoutFeedback,
-  TextInput,
+  TouchableOpacity,
   Image,
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+  Ionicons,
   Octicons,
-  MaterialIcons,
-  AntDesign,
   MaterialCommunityIcons,
+  Feather,
 } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { doc, getDoc } from "firebase/firestore";
@@ -22,7 +21,6 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../firebase/config";
 
 const DoctorHome = (props) => {
-  const [search, setsearch] = useState("");
   const { authState } = useSelector((state) => ({
     authState: state._persistedReducer.auth,
   }));
@@ -56,146 +54,146 @@ const DoctorHome = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.userdetails}>
-            <View>
-              <Text style={styles.grettingtext}>Welcome</Text>
-              <Text style={styles.doctornametext}>Dr. {name}</Text>
-            </View>
-            <TouchableWithoutFeedback
-              onPress={() => props.navigation.navigate("profile", profiledata)}
-            >
-              <Image
-                style={styles.profileimg}
-                source={{
-                  uri: img,
-                }}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-          <View style={styles.menu}>
-            <TextInput
-              placeholder="Search patients here"
-              style={styles.searchinput}
-              value={search}
-              onChangeText={(text) => setsearch(text)}
+        <View style={styles.profile}>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("profile", profiledata)}
+            hitSlop={{ top: 60, bottom: 40, left: 60, right: 40 }}
+          >
+            <Image source={{ uri: img }} style={styles.profilephoto} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.notification}>
+            <Ionicons
+              name="ios-notifications-outline"
+              size={40}
+              color="rgb(255,255,255)"
             />
-            <Octicons
-              style={{
-                position: "absolute",
-                top: 6,
-                left: 6,
-                marginLeft: 20,
-              }}
-              name="search"
-              size={37}
-              color="black"
-            />
-          </View>
-          <View style={styles.middle}>
-            <View style={styles.menulist}>
-              <TouchableWithoutFeedback>
-                <View style={styles.iconmenu}>
-                  <Image
-                    style={styles.imgicon}
-                    source={require("../../assets/images/medical-record.png")}
-                  />
-                  <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
-                    Clinics
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback>
-                <View style={styles.iconmenu}>
-                  <Image
-                    style={styles.imgicon}
-                    source={require("../../assets/images/medical-team.png")}
-                  />
-                  <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
-                    Events
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback>
-                <View style={styles.iconmenu}>
-                  <Image
-                    style={styles.imgicon}
-                    source={require("../../assets/images/patient.png")}
-                  />
-                  <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
-                    Admissions
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </View>
-          <View style={styles.patient}>
-            <TouchableWithoutFeedback
-              onPress={() => props.navigation.navigate("findpatient")}
-            >
-              <View style={styles.careperson}>
-                <Image
-                  style={styles.careimg}
-                  source={require("../../assets/images/examination.png")}
-                />
-                <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
-                  Your Patient
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
-              <View style={styles.careperson}>
-                <Image
-                  style={styles.careimg}
-                  source={require("../../assets/images/surgery-room.png")}
-                />
-                <Text style={{ alignSelf: "center", fontWeight: "bold" }}>
-                  Operating Room
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
+          </TouchableOpacity>
         </View>
-        <View style={styles.appointment}>
-          <View style={{ flexDirection: "row" }}>
-            <MaterialIcons
-              style={{ alignSelf: "flex-end", paddingTop: 10 }}
-              name="notifications-none"
-              size={30}
-              color="black"
-            />
-            <Text style={styles.appointmenttext}>
-              16 appointments to be seen today
+        <View
+          style={{ marginTop: 70, marginHorizontal: 16, flexDirection: "row" }}
+        >
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => props.navigation.navigate("findpatient")}
+          >
+            <Text style={{ color: "rgb(255,255,255)", fontSize: 25 }}>
+              Patient
             </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, { marginLeft: 25 }]}>
+            <Text style={{ color: "rgb(255,255,255)", fontSize: 25 }}>
+              Appointment
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.menu}>
+          <View style={{ flexDirection: "row", marginTop: 5 }}>
+            <View
+              style={{
+                width: 80,
+                height: 60,
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+                backgroundColor: "rgb(140, 129, 150)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Octicons
+                name="comment-discussion"
+                size={35}
+                color="rgb(225,225,225)"
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                width: 243,
+                height: 60,
+                alignItems: "center",
+                justifyContent: "center",
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                backgroundColor: "rgb(162, 142, 169)",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                8 messages in your chat
+              </Text>
+              <Text style={{ fontSize: 15, fontStyle: "italic" }}>
+                4 chats have not responded
+              </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableWithoutFeedback>
-            <View style={styles.appointmentbtn}>
-              <Text style={{ fontSize: 16, color: "rgb(255,255,255)" }}>
-                <AntDesign name="calendar" size={24} color="rgb(255,255,255)" />{" "}
-                Today, Between{" "}
-                <MaterialCommunityIcons
-                  name="clock-time-eight-outline"
-                  size={24}
-                  color="rgb(255,255,255)"
-                />{" "}
-                8:30 am - 2:00 pm
-              </Text>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View
+              style={{
+                width: 80,
+                height: 60,
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+                backgroundColor: "rgb(140, 129, 150)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="car-emergency"
+                size={35}
+                color="rgb(225,225,225)"
+              />
             </View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <View style={styles.schedulebtn}>
-              <Text style={{ fontSize: 16, color: "rgb(255,255,255)" }}>
-                <AntDesign name="calendar" size={24} color="rgb(255,255,255)" />{" "}
-                Schedule a patient{" "}
-                <MaterialCommunityIcons
-                  name="clock-time-eight-outline"
-                  size={24}
-                  color="rgb(255,255,255)"
-                />{" "}
-                for time range
+            <TouchableOpacity
+              style={{
+                width: 243,
+                height: 60,
+                alignItems: "center",
+                justifyContent: "center",
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                backgroundColor: "rgb(162, 142, 169)",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                6 emergencies came in
               </Text>
+              <Text style={{ fontSize: 15, fontStyle: "italic" }}>
+                1 booked to your clinic
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <View
+              style={{
+                width: 80,
+                height: 60,
+                borderTopLeftRadius: 30,
+                borderBottomLeftRadius: 30,
+                backgroundColor: "rgb(140, 129, 150)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Feather name="activity" size={35} color="rgb(225,225,225)" />
             </View>
-          </TouchableWithoutFeedback>
+            <TouchableOpacity
+              style={{
+                width: 243,
+                height: 60,
+                alignItems: "center",
+                justifyContent: "center",
+                borderTopRightRadius: 30,
+                borderBottomRightRadius: 30,
+                backgroundColor: "rgb(162, 142, 169)",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "600" }}>
+                0 patients for observation
+              </Text>
+              <Text style={{ fontSize: 15, fontStyle: "italic" }}>
+                0 patients transfered for observation
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     </React.Fragment>
@@ -206,136 +204,56 @@ const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
-    backgroundColor: "white",
-  },
-  header: {
-    flex: 1,
-  },
-  middle: {
-    flex: 1,
-  },
-  grettingtext: {
-    fontSize: 15,
-    fontWeight: "500",
-    marginTop: 10,
-    marginLeft: 5,
-  },
-  doctornametext: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginLeft: 5,
-  },
-  profileimg: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginTop: 5,
-  },
-  userdetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    width: window.width,
+    height: window.height,
     backgroundColor: "rgb(255,255,255)",
-    // marginVertical: 3,
-    borderRadius: 10,
-    width: 330,
-    height: 70,
-  },
-  menu: {
-    backgroundColor: "rgb(255,255,255)",
-    marginVertical: 3,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  searchinput: {
-    borderWidth: 1,
-    marginHorizontal: 5,
-    marginVertical: 5,
-    width: 320,
-    height: 40,
-    paddingLeft: 40,
-    fontSize: 22,
-    borderRadius: 8,
-  },
-  menulist: {
-    flex: 3,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 5,
-    marginHorizontal: 5,
-  },
-  iconmenu: {
-    borderWidth: 1,
-    width: 110,
-    height: 145,
-    borderColor: "rgb(225,225,225)",
-  },
-  imgicon: {
-    marginBottom: 15,
-    width: 100,
-    height: 110,
-    alignSelf: "center",
-  },
-  patient: {
-    backgroundColor: "rgb(255,255,255)",
-    marginVertical: 3,
-    borderRadius: 10,
-    // width: 330,
-    // height: 150,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    flex: 1,
-    marginBottom: 50,
-    marginLeft: 10,
-  },
-  careimg: {
-    width: 130,
-    height: 120,
-  },
-  careperson: {
-    borderColor: "rgb(225,225,225)",
-    borderWidth: 1,
-    width: 140,
-    height: 140,
-    marginVertical: 5,
-  },
-  appointment: {
-    // flex: 1,
-    backgroundColor: "rgb(255,255,255)",
-    marginVertical: 3,
-    borderRadius: 10,
-    width: 330,
-    height: 180,
-  },
-  appointmenttext: {
-    color: "rgb(128,128,128)",
-    fontSize: 22,
-    paddingTop: 10,
-    fontWeight: "500",
     position: "relative",
   },
-  appointmentbtn: {
-    width: 290,
-    height: 50,
+  profile: {
+    width: "100%",
+    height: "35%",
+    borderBottomEndRadius: 90,
     backgroundColor: "rgb(109, 123, 175)",
-    color: "rgb(255,255,255)",
+    justifyContent: "flex-end",
     alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 20,
-    position: "absolute",
-    right: 10,
-    bottom: 70,
+    position: "relative",
   },
-  schedulebtn: {
-    width: 290,
+  profilephoto: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    position: "absolute",
+    right: 0,
+    bottom: -60,
+    borderWidth: 5,
+    borderColor: "rgb(255,255,255)",
+  },
+  notification: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "rgb(109, 123, 175)",
+    position: "absolute",
+    right: 110,
+    bottom: -20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "rgb(255,255,255)",
+  },
+  menu: {
+    width: "90%",
+    height: "40%",
+    backgroundColor: "rgb(245,245,245)",
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+  },
+  button: {
+    width: 150,
     height: 50,
     backgroundColor: "rgb(109, 123, 175)",
-    color: "rgb(255,255,255)",
-    alignItems: "center",
     justifyContent: "center",
-    marginVertical: 20,
-    position: "absolute",
-    right: 10,
-    bottom: 0,
+    alignItems: "center",
   },
 });

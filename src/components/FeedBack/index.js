@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   StyleSheet,
-  FlatList,
+  ScrollView,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../../firebase/config";
-import { FeedBackForm } from "../FeedBackForm";
+import { Ionicons, Fontisto } from "@expo/vector-icons";
 
 const FeedBack = (props) => {
   const [dataset, setdataset] = useState([]);
@@ -28,67 +29,134 @@ const FeedBack = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <Text>FeedBack</Text>
-        <FlatList
-          style={styles.list}
-          data={dataset
-            .sort((a, b) => a.status.localeCompare(b.status))
-            .sort((a, b) => (Number(a.date) > Number(b.date) ? 1 : -1))}
-          keyExtractor={(item, index) => {
-            return index;
-          }}
-          renderItem={({ item: { status, doctor, date, casetype, id } }) => (
-            <TouchableWithoutFeedback
-              onPress={() =>
-                props.navigation.navigate("feedbackform", {
-                  status,
-                  doctor,
-                  date,
-                  casetype,
-                  id,
-                })
-              }
-            >
-              <View style={styles.grid}>
-                <View style={{ flexDirection: "row" }}>
-                  <Text>{date}</Text>
-                </View>
-                <View style={styles.details}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text>Doctor</Text>
-                    <Text>{doctor}</Text>
+        <View style={styles.feedback}>
+          <TouchableOpacity onPress={() => props.navigation.goBack()}>
+            <Ionicons
+              style={{ marginLeft: 16 }}
+              name="arrow-back"
+              size={30}
+              color="black"
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginHorizontal: 16 }}>
+          <Text style={{ fontSize: 30 }}>List of cases</Text>
+        </View>
+        <ScrollView>
+          {dataset &&
+            dataset
+              .sort((a, b) => a.status.localeCompare(b.status))
+              .sort((a, b) => (Number(a.date) > Number(b.date) ? 1 : -1))
+              .map(({ casetype, date, doctor, status, id }, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    props.navigation.navigate("feedbackform", {
+                      status,
+                      doctor,
+                      date,
+                      casetype,
+                      id,
+                    })
+                  }
+                >
+                  <View
+                    style={{
+                      borderTopWidth: 2,
+                      borderBottomWidth: 2,
+                      borderTopColor: "rgb(109, 123, 175)",
+                      borderBottomColor: "rgb(109, 123, 175)",
+                      height: 120,
+                      marginVertical: 10,
+                      backgroundColor: "rgb(245,245,245)",
+                      paddingLeft: 10,
+                      position: "relative",
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", marginTop: 10 }}>
+                      <Text style={{ color: "rgb(128,128,128)", fontSize: 20 }}>
+                        Date of visit
+                      </Text>
+                      <Text style={{ fontSize: 20, color: "rgb(47,79,79)" }}>
+                        {" "}
+                        {date}
+                      </Text>
+                    </View>
+                    <View style={{ marginTop: 5, flexDirection: "row" }}>
+                      <Fontisto
+                        name="doctor"
+                        size={30}
+                        color="rgb(109, 123, 175)"
+                      />
+                      <Text
+                        style={{
+                          color: "rgb(128,128,128)",
+                          fontSize: 20,
+                          marginLeft: 5,
+                        }}
+                      >
+                        {doctor}
+                      </Text>
+                    </View>
+                    <View style={{ marginTop: 5 }}>
+                      <Text style={{ color: "rgb(128,128,128)", fontSize: 20 }}>
+                        {casetype}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        transform: [{ rotate: "360deg" }],
+                        backgroundColor: "rgb(144,238,144)",
+                        width: 20,
+                        height: 116,
+                        position: "absolute",
+                        right: 1,
+                      }}
+                    >
+                      {status === "Open" ? (
+                        <Text
+                          style={{
+                            color: "blue",
+                            fontSize: 22,
+                            letterSpacing: 5,
+                          }}
+                        >
+                          {status}
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            color: "red",
+                            fontSize: 22,
+                            letterSpacing: 5,
+                          }}
+                        >
+                          {status}
+                        </Text>
+                      )}
+                    </View>
                   </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text>Status</Text>
-                    <Text>{status}</Text>
-                  </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text>Case Type</Text>
-                    <Text>{casetype}</Text>
-                  </View>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          )}
-          ListEmptyComponent={<Text>No Feedback created</Text>}
-        />
+                </TouchableOpacity>
+              ))}
+        </ScrollView>
       </SafeAreaView>
     </React.Fragment>
   );
 };
 export { FeedBack };
+const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "rgb(255,255,255)",
+    width: window.width,
+    height: window.height,
+    position: "relative",
   },
-  list: {
-    flex: 0.9,
-  },
-  grid: {
-    flex: 0.3,
-    flexDirection: "row",
-  },
-  details: {
-    flexDirection: "column",
+  feedback: {
+    width: "100%",
+    height: "15%",
+    backgroundColor: "rgb(225,225,225)",
+    justifyContent: "flex-end",
   },
 });
