@@ -211,6 +211,83 @@ const FindPatient = (props) => {
         break;
     }
   };
+  const renderseacrhresults = (
+    firstName,
+    lastName,
+    formatedDate,
+    gender,
+    image,
+    uid,
+    index
+  ) => (
+    <TouchableWithoutFeedback
+      key={index}
+      onPress={() =>
+        props.navigation.navigate("caselist", {
+          name: `${firstName} ${lastName}`,
+          uid: uid,
+        })
+      }
+    >
+      <View
+        onStartShouldSetResponder={() => true}
+        style={{
+          marginVertical: 10,
+          borderWidth: 1,
+          borderColor: "rgb(109, 123, 175)",
+          width: "100%",
+          height: 150,
+          backgroundColor: "rgb(225,225,225)",
+          flexDirection: "row",
+        }}
+      >
+        <Image
+          source={{ uri: image }}
+          style={{ width: 130, height: 130, marginTop: 10 }}
+        />
+        <View style={{ marginHorizontal: 10 }}>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <Octicons name="dot" size={25} color="rgb(109, 123, 175)" />
+            <Text
+              style={{
+                marginLeft: 5,
+                alignSelf: "center",
+                fontSize: 25,
+              }}
+            >
+              {firstName} {lastName}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <Octicons name="dot" size={24} color="rgb(109, 123, 175)" />
+            <Text
+              style={{
+                marginLeft: 5,
+                alignSelf: "center",
+                fontSize: 20,
+                color: "rgb(112,128,144)",
+              }}
+            >
+              {formatedDate}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", marginTop: 10 }}>
+            <Octicons name="dot" size={20} color="rgb(109, 123, 175)" />
+            <Text
+              style={{
+                marginLeft: 5,
+                alignSelf: "center",
+                fontSize: 20,
+                color: "rgb(112,128,144)",
+              }}
+            >
+              {gender}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  );
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -321,87 +398,16 @@ const FindPatient = (props) => {
               (
                 { firstName, lastName, formatedDate, gender, image, uid },
                 index
-              ) => (
-                <TouchableWithoutFeedback
-                  key={index}
-                  onPress={() =>
-                    props.navigation.navigate("caselist", {
-                      name: `${firstName} ${lastName}`,
-                      uid: uid,
-                    })
-                  }
-                >
-                  <View
-                    onStartShouldSetResponder={() => true}
-                    style={{
-                      marginVertical: 10,
-                      borderWidth: 1,
-                      borderColor: "rgb(109, 123, 175)",
-                      width: "100%",
-                      height: 150,
-                      backgroundColor: "rgb(225,225,225)",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Image
-                      source={{ uri: image }}
-                      style={{ width: 130, height: 130, marginTop: 10 }}
-                    />
-                    <View style={{ marginHorizontal: 10 }}>
-                      <View style={{ flexDirection: "row", marginTop: 10 }}>
-                        <Octicons
-                          name="dot"
-                          size={25}
-                          color="rgb(109, 123, 175)"
-                        />
-                        <Text
-                          style={{
-                            marginLeft: 5,
-                            alignSelf: "center",
-                            fontSize: 25,
-                          }}
-                        >
-                          {firstName} {lastName}
-                        </Text>
-                      </View>
-                      <View style={{ flexDirection: "row", marginTop: 10 }}>
-                        <Octicons
-                          name="dot"
-                          size={24}
-                          color="rgb(109, 123, 175)"
-                        />
-                        <Text
-                          style={{
-                            marginLeft: 5,
-                            alignSelf: "center",
-                            fontSize: 20,
-                            color: "rgb(112,128,144)",
-                          }}
-                        >
-                          {formatedDate}
-                        </Text>
-                      </View>
-                      <View style={{ flexDirection: "row", marginTop: 10 }}>
-                        <Octicons
-                          name="dot"
-                          size={20}
-                          color="rgb(109, 123, 175)"
-                        />
-                        <Text
-                          style={{
-                            marginLeft: 5,
-                            alignSelf: "center",
-                            fontSize: 20,
-                            color: "rgb(112,128,144)",
-                          }}
-                        >
-                          {gender}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </TouchableWithoutFeedback>
-              )
+              ) =>
+                renderseacrhresults(
+                  firstName,
+                  lastName,
+                  formatedDate,
+                  gender,
+                  image,
+                  uid,
+                  index
+                )
             )}
         </ScrollView>
       </SafeAreaView>

@@ -79,6 +79,58 @@ const FeedBackForm = (props) => {
       func(doc.id);
     });
   }
+  const renderfeedlist = (date, message, id, index) => (
+    <View
+      key={index}
+      style={{
+        backgroundColor: "rgb(245,245,245)",
+        marginVertical: 5,
+        alignItems: "flex-end",
+        marginLeft: 70,
+        borderWidth: 1,
+        borderColor: "rgb(109, 123, 175)",
+        flexBasis: "auto",
+        padding: 15,
+      }}
+    >
+      <Text style={{ fontSize: 25 }}>{message}</Text>
+      <Text
+        style={{
+          fontSize: 12,
+          color: "rgb(109, 123, 175)",
+          fontWeight: "500",
+        }}
+      >
+        {moment(date).startOf("minute").fromNow()}
+      </Text>
+    </View>
+  );
+  const renderreply = (item, index) => (
+    <View
+      key={index}
+      style={{
+        borderWidth: 1,
+        marginVertical: 5,
+        borderColor: "rgb(225,225,225)",
+        backgroundColor: "rgb(230,230,250)",
+        flexBasis: "auto",
+        alignItems: "flex-start",
+        marginRight: 70,
+        padding: 15,
+      }}
+    >
+      <Text style={{ fontSize: 25 }}>{item.message}</Text>
+      <Text
+        style={{
+          fontSize: 12,
+          color: "rgb(109, 123, 175)",
+          fontWeight: "500",
+        }}
+      >
+        {moment(item.date).startOf("minutes").fromNow()}
+      </Text>
+    </View>
+  );
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -185,63 +237,24 @@ const FeedBackForm = (props) => {
         <ScrollView automaticallyAdjustContentInsets={false}>
           {feedlist &&
             feedlist
-              .sort((a, b) => (Number(a.date) > Number(b.date) ? 1 : -1))
-              .map(({ date, message, id }, index) => (
-                <View
-                  key={index}
-                  style={{
-                    backgroundColor: "rgb(245,245,245)",
-                    marginVertical: 5,
-                    alignItems: "flex-end",
-                    marginLeft: 70,
-                    borderWidth: 1,
-                    borderColor: "rgb(109, 123, 175)",
-                    flexBasis: "auto",
-                    padding: 15,
-                  }}
-                >
-                  <Text style={{ fontSize: 25 }}>{message}</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: "rgb(109, 123, 175)",
-                      fontWeight: "500",
-                    }}
-                  >
-                    {moment(date).startOf("minute").fromNow()}
-                  </Text>
-                </View>
-              ))}
+              .sort(
+                (a, b) =>
+                  new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                  new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+              )
+              .map(({ date, message, id }, index) =>
+                renderfeedlist(date, message, id, index)
+              )}
           <ScrollView>
             {replyset &&
               replyset
-                .sort((a, b) => (Number(a.date) > Number(b.date) ? 1 : -1))
+                .sort(
+                  (a, b) =>
+                    new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                    new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+                )
                 .filter((item) => item.id !== id)
-                .map((item, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "rgb(225,225,225)",
-                      backgroundColor: "rgb(230,230,250)",
-                      flexBasis: "auto",
-                      alignItems: "flex-start",
-                      marginRight: 70,
-                      padding: 15,
-                    }}
-                  >
-                    <Text style={{ fontSize: 25 }}>{item.message}</Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: "rgb(109, 123, 175)",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {moment(item.date).startOf("minutes").fromNow()}
-                    </Text>
-                  </View>
-                ))}
+                .map((item, index) => renderreply(item, index))}
           </ScrollView>
         </ScrollView>
         <View style={{ flexDirection: "row" }}>
