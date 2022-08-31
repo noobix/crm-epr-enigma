@@ -87,7 +87,7 @@ const DoctorHome = (props) => {
           </TouchableOpacity>
         </View>
         <View style={styles.menu}>
-          <View style={{ flexDirection: "row", marginTop: 5 }}>
+          <View style={{ flexDirection: "row", marginTop: 15 }}>
             <View
               style={{
                 width: 80,
@@ -120,7 +120,7 @@ const DoctorHome = (props) => {
                 8 messages in your chat
               </Text>
               <Text style={{ fontSize: 15, fontStyle: "italic" }}>
-                4 chats have not responded
+                4 new messages not responded to
               </Text>
             </TouchableOpacity>
           </View>
@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
   menu: {
     width: "90%",
     height: "40%",
-    backgroundColor: "rgb(245,245,245)",
     position: "absolute",
     bottom: 20,
     right: 20,

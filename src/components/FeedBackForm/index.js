@@ -8,6 +8,7 @@ import {
   Dimensions,
   ScrollView,
   Keyboard,
+  FlatList,
 } from "react-native";
 import { savePatientFeedback } from "../../store/feedbackSlice";
 import { useDispatch } from "react-redux";
@@ -26,9 +27,14 @@ const FeedBackForm = (props) => {
   const [feedlist, setfeedlist] = useState([]);
   const [replyset, setreplyset] = useState([]);
   const [mesageinput, setmessageinput] = useState("");
+  const [xheight, setxheight] = useState(50);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const dispatch = useDispatch();
+  function updatexheight(xheight) {
+    setxheight(xheight);
+  }
   const handleSaveFeedback = () => {
+    Keyboard.dismiss();
     if (mesageinput.trim === "") {
       return;
     }
@@ -101,7 +107,7 @@ const FeedBackForm = (props) => {
           fontWeight: "500",
         }}
       >
-        {moment(date).startOf("minute").fromNow()}
+        {moment(new Date(date)).startOf("minute").fromNow()}
       </Text>
     </View>
   );
@@ -127,7 +133,7 @@ const FeedBackForm = (props) => {
           fontWeight: "500",
         }}
       >
-        {moment(item.date).startOf("minutes").fromNow()}
+        {moment(new Date(item.date)).startOf("minutes").fromNow()}
       </Text>
     </View>
   );
@@ -146,10 +152,10 @@ const FeedBackForm = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  <AntDesign name="calendar" size={30} color="rgb(47,79,79)" />
+                  <AntDesign name="calendar" size={15} color="rgb(47,79,79)" />
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 16,
                       marginLeft: 15,
                       color: "rgb(128,128,128)",
                     }}
@@ -165,10 +171,10 @@ const FeedBackForm = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  <Ionicons name="options" size={30} color="rgb(47,79,79)" />
+                  <Ionicons name="options" size={15} color="rgb(47,79,79)" />
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 16,
                       marginLeft: 15,
                       color: "rgb(128,128,128)",
                     }}
@@ -186,12 +192,12 @@ const FeedBackForm = (props) => {
                 >
                   <MaterialCommunityIcons
                     name="doctor"
-                    size={30}
+                    size={15}
                     color="rgb(47,79,79)"
                   />
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 16,
                       marginLeft: 15,
                       color: "rgb(128,128,128)",
                     }}
@@ -209,12 +215,12 @@ const FeedBackForm = (props) => {
                 >
                   <MaterialCommunityIcons
                     name="list-status"
-                    size={30}
+                    size={15}
                     color="rgb(47,79,79)"
                   />
                   <Text
                     style={{
-                      fontSize: 20,
+                      fontSize: 16,
                       marginLeft: 15,
                       color: "rgb(128,128,128)",
                     }}
@@ -223,7 +229,10 @@ const FeedBackForm = (props) => {
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <TouchableOpacity
+                style={{ marginTop: 15 }}
+                onPress={() => props.navigation.goBack()}
+              >
                 <Ionicons
                   style={{ marginLeft: 16 }}
                   name="arrow-back"
@@ -234,39 +243,45 @@ const FeedBackForm = (props) => {
             </View>
           </React.Fragment>
         ) : null}
-        <ScrollView automaticallyAdjustContentInsets={false}>
-          {feedlist &&
-            feedlist
-              .sort(
-                (a, b) =>
-                  new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-                  new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-              )
-              .map(({ date, message, id }, index) =>
-                renderfeedlist(date, message, id, index)
-              )}
-          <ScrollView>
-            {replyset &&
-              replyset
-                .sort(
-                  (a, b) =>
-                    new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-                    new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-                )
-                .filter((item) => item.id !== id)
-                .map((item, index) => renderreply(item, index))}
-          </ScrollView>
-        </ScrollView>
+        <FlatList
+          data={feedlist.sort(
+            (a, b) =>
+              new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+              new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+          )}
+          keyExtractor={(item, index) => {
+            return index;
+          }}
+          renderItem={({ item: { date, message, id } }) => (
+            <React.Fragment>
+              {renderfeedlist(date, message, id)}
+              <ScrollView keyboardShouldPersistTaps="handled">
+                {replyset &&
+                  replyset
+                    .sort(
+                      (a, b) =>
+                        new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                        new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+                    )
+                    .filter((item) => item.id === id)
+                    .map((item, index) => renderreply(item, index))}
+              </ScrollView>
+            </React.Fragment>
+          )}
+        />
         <View style={{ flexDirection: "row" }}>
           <TextInput
             autoCorrect
             autoCapitalize="sentences"
             onChangeText={(text) => setmessageinput(text)}
+            onContentSizeChange={(e) =>
+              updatexheight(e.nativeEvent.contentSize.height)
+            }
             multiline
             numberOfLines={6}
             scrollEnabled
             style={{
-              height: 50,
+              height: xheight,
               width: "90%",
               backgroundColor: "rgb(245,245,245)",
               marginTop: 20,
@@ -306,14 +321,13 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "100%",
-    height: "35%",
+    height: "25%",
     backgroundColor: "rgb(225,225,225)",
   },
   formdetails: {
-    width: "90%",
+    width: "100%",
     height: "65%",
-    marginHorizontal: 20,
-    marginVertical: 20,
     backgroundColor: "rgb(255,255,255)",
+    borderBottomRightRadius: 70,
   },
 });

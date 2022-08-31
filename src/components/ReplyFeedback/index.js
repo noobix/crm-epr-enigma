@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   StyleSheet,
   View,
   Text,
   Modal,
+  FlatList,
   Dimensions,
   TextInput,
+  Keyboard,
   KeyboardAvoidingView,
   TouchableOpacity,
   ScrollView,
@@ -36,6 +38,7 @@ const ReplyFeedback = (props) => {
   const [visible, setvisible] = useState(null);
   const [messagereply, setmessagereply] = useState("");
   const [msgid, setmsgid] = useState(null);
+  const inputref = useRef(null);
   const dispatch = useDispatch();
   useEffect(() => {
     getfeedback(getreply);
@@ -63,6 +66,7 @@ const ReplyFeedback = (props) => {
     });
   }
   const handleSaveReply = (id) => {
+    Keyboard.dismiss();
     if (messagereply.trim() === "") {
       return;
     }
@@ -74,6 +78,13 @@ const ReplyFeedback = (props) => {
     props.navigation.navigate("caselist");
     setvisible(false);
   };
+  const handelInputsubmit = useCallback(
+    (ev) => {
+      const input = ev.nativeEvent.text;
+      setmessagereply(input);
+    },
+    [setmessagereply]
+  );
   const handleCaseupdate = async () => {
     const caseRef = doc(firestore, "case", props.route.params.id);
     await updateDoc(caseRef, { status: "Close" });
@@ -164,7 +175,7 @@ const ReplyFeedback = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView behavior="position">
+        <KeyboardAvoidingView behavior="height">
           <ModalPopup visible={visible}>
             <View
               style={{
@@ -181,15 +192,15 @@ const ReplyFeedback = (props) => {
               >
                 <TextInput
                   placeholder="Enter Reply"
+                  ref={inputref}
                   multiline
                   autoCorrect
                   scrollEnabled
                   numberOfLines={8}
                   autoCapitalize="sentences"
                   placeholderTextColor="rgb(0,191,255)"
-                  onChangeText={(text) => setmessagereply(text)}
-                  value={messagereply}
-                  blurOnSubmit={false}
+                  defaultValue={messagereply}
+                  onEndEditing={handelInputsubmit}
                   style={{
                     width: "100%",
                     height: 250,
@@ -251,10 +262,10 @@ const ReplyFeedback = (props) => {
                 alignItems: "center",
               }}
             >
-              <AntDesign name="calendar" size={30} color="rgb(47,79,79)" />
+              <AntDesign name="calendar" size={15} color="rgb(47,79,79)" />
               <Text
                 style={{
-                  fontSize: 20,
+                  fontSize: 16,
                   marginLeft: 15,
                   color: "rgb(128,128,128)",
                 }}
@@ -270,10 +281,10 @@ const ReplyFeedback = (props) => {
                 alignItems: "center",
               }}
             >
-              <Ionicons name="options" size={30} color="rgb(47,79,79)" />
+              <Ionicons name="options" size={15} color="rgb(47,79,79)" />
               <Text
                 style={{
-                  fontSize: 20,
+                  fontSize: 16,
                   marginLeft: 15,
                   color: "rgb(128,128,128)",
                 }}
@@ -289,10 +300,10 @@ const ReplyFeedback = (props) => {
                 alignItems: "center",
               }}
             >
-              <Ionicons name="person-outline" size={30} color="rgb(47,79,79)" />
+              <Ionicons name="person-outline" size={15} color="rgb(47,79,79)" />
               <Text
                 style={{
-                  fontSize: 20,
+                  fontSize: 16,
                   marginLeft: 15,
                   color: "rgb(128,128,128)",
                 }}
@@ -310,12 +321,12 @@ const ReplyFeedback = (props) => {
             >
               <Ionicons
                 name="ios-information-circle-outline"
-                size={30}
+                size={15}
                 color="rgb(47,79,79)"
               />
               <Text
                 style={{
-                  fontSize: 20,
+                  fontSize: 16,
                   marginLeft: 15,
                   color: "rgb(128,128,128)",
                 }}
@@ -324,7 +335,10 @@ const ReplyFeedback = (props) => {
               </Text>
             </View>
           </View>
-          <TouchableOpacity onPress={() => props.navigation.goBack()}>
+          <TouchableOpacity
+            style={{ marginTop: 15 }}
+            onPress={() => props.navigation.goBack()}
+          >
             <Ionicons
               style={{ marginLeft: 16 }}
               name="arrow-back"
@@ -355,32 +369,32 @@ const ReplyFeedback = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView
-          automaticallyAdjustContentInsets={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {dataset &&
-            dataset
-              .sort(
-                (a, b) =>
-                  new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-                  new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-              )
-              .map(({ id, message, date }, index) =>
-                renderfeedback(id, message, date, index)
-              )}
-          <ScrollView keyboardShouldPersistTaps="handled">
-            {replyset &&
-              replyset
-                .sort(
-                  (a, b) =>
-                    new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-                    new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-                )
-                .filter((item) => item.id !== id)
-                .map((item, index) => renderreply(item, index))}
-          </ScrollView>
-        </ScrollView>
+        <FlatList
+          data={dataset.sort(
+            (a, b) =>
+              new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+              new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+          )}
+          keyExtractor={(item, index) => {
+            return index;
+          }}
+          renderItem={({ item: { id, message, date } }) => (
+            <React.Fragment>
+              {renderfeedback(id, message, date)}
+              <ScrollView keyboardShouldPersistTaps="handled">
+                {replyset &&
+                  replyset
+                    .sort(
+                      (a, b) =>
+                        new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                        new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+                    )
+                    .filter((item) => item.id === id)
+                    .map((item, index) => renderreply(item, index))}
+              </ScrollView>
+            </React.Fragment>
+          )}
+        />
       </SafeAreaView>
     </React.Fragment>
   );
@@ -398,14 +412,13 @@ const styles = StyleSheet.create({
   },
   feedbackreply: {
     width: "100%",
-    height: "35%",
+    height: "25%",
     backgroundColor: "rgb(225,225,225)",
   },
   replydetails: {
-    width: "90%",
+    width: "100%",
     height: "65%",
     backgroundColor: "rgb(255,255,255)",
-    marginVertical: 20,
-    marginHorizontal: 20,
+    borderBottomRightRadius: 70,
   },
 });
