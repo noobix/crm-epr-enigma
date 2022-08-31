@@ -228,6 +228,7 @@ const Registeration = (props) => {
               onChangeText={(text) => setemail(text)}
               iconName="email-outline"
               label="Email"
+              autoCapitalize="none"
               value={email}
               placeholder="Enter your email address"
             />
