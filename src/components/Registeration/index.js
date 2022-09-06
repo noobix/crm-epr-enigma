@@ -128,11 +128,18 @@ const Registeration = (props) => {
             </View>
 
             <Input
-              onChangeText={(text) => setfullname(text)}
+              onChangeText={(text) => setfname(text)}
               iconName="account-outline"
-              label="Full Name"
-              value={fullname}
-              placeholder="Enter your full name"
+              label="Fist Name"
+              value={fname}
+              placeholder="Enter your first name"
+            />
+            <Input
+              onChangeText={(text) => setlname(text)}
+              iconName="account-outline"
+              label="Last Name"
+              value={lname}
+              placeholder="Enter your last name"
             />
             <View>
               <Text style={styles.formlable}>Gender</Text>
