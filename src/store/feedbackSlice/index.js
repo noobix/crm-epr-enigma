@@ -39,3 +39,14 @@ export const saveDoctorReply = createAsyncThunk(
     }
   }
 );
+export const saveFeedbackStatus = createAsyncThunk(
+  "brook/saveFeedbackStatus",
+  async (status) => {
+    try {
+      const ref = collection(firestore, "status");
+      await addDoc(ref, status);
+    } catch (lsd) {
+      console.log(lsd);
+    }
+  }
+);

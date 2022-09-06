@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Ionicons,
@@ -15,7 +16,14 @@ import {
   Feather,
 } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import { firestore } from "../../firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../firebase/config";
@@ -27,12 +35,21 @@ const DoctorHome = (props) => {
   const [name, setname] = useState("");
   const [img, setimg] = useState(null);
   const [profiledata, setprofiledata] = useState({});
+  const [notify, setnotify] = useState(false);
+  const [notNumber, setnotNumber] = useState(0);
+  const [totalchat, settotalchat] = useState(0);
+  const isFocused = useIsFocused();
   useEffect(() => {
     async function fetch() {
       await getProfile();
     }
     fetch();
   }, []);
+  useEffect(() => {
+    setnotify(false);
+    getnotify();
+    allChatcount();
+  }, [isFocused, name]);
   const getProfile = async () => {
     try {
       const docRef = doc(firestore, "users", authState.userId);
@@ -51,6 +68,25 @@ const DoctorHome = (props) => {
       console.log(err);
     }
   };
+  async function getnotify() {
+    const itemstore = collection(firestore, "status");
+    const item = query(
+      itemstore,
+      where("name", "==", name),
+      where("status", "==", "unread")
+    );
+    const querySnapshot = await getDocs(item);
+    setnotNumber(querySnapshot.size);
+    if (!querySnapshot.empty) {
+      setnotify(true);
+    }
+  }
+  async function allChatcount() {
+    const itemstore = collection(firestore, "status");
+    const item = query(itemstore, where("name", "==", name));
+    const querySnapshot = await getDocs(item);
+    settotalchat(querySnapshot.size);
+  }
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -61,7 +97,12 @@ const DoctorHome = (props) => {
           >
             <Image source={{ uri: img }} style={styles.profilephoto} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.notification}>
+          <TouchableOpacity
+            style={styles.notification}
+            onPress={() =>
+              props.navigation.navigate("fetchnotification", { name: name })
+            }
+          >
             <Ionicons
               name="ios-notifications-outline"
               size={40}
@@ -72,6 +113,20 @@ const DoctorHome = (props) => {
         <View
           style={{ marginTop: 70, marginHorizontal: 16, flexDirection: "row" }}
         >
+          {notify === true ? (
+            <View
+              style={{
+                width: 18,
+                height: 18,
+                backgroundColor: "rgb(255,69,0)",
+                borderRadius: 9,
+                position: "absolute",
+                right: 110,
+                bottom: 115,
+                zIndex: 1,
+              }}
+            ></View>
+          ) : null}
           <TouchableOpacity
             style={styles.button}
             onPress={() => props.navigation.navigate("findpatient")}
@@ -80,9 +135,12 @@ const DoctorHome = (props) => {
               Patient
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, { marginLeft: 25 }]}>
+          <TouchableOpacity
+            style={[styles.button, { marginLeft: 25 }]}
+            onPress={() => props.navigation.navigate("newsfeed")}
+          >
             <Text style={{ color: "rgb(255,255,255)", fontSize: 25 }}>
-              Appointment
+              News feed
             </Text>
           </TouchableOpacity>
         </View>
@@ -117,10 +175,10 @@ const DoctorHome = (props) => {
               }}
             >
               <Text style={{ fontSize: 15, fontWeight: "600" }}>
-                8 messages in your chat
+                {totalchat} messages in your chat
               </Text>
               <Text style={{ fontSize: 15, fontStyle: "italic" }}>
-                4 new messages not responded to
+                {notNumber} new messages not responded to
               </Text>
             </TouchableOpacity>
           </View>

@@ -8,9 +8,17 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useIsFocused } from "@react-navigation/native";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  collection,
+  where,
+} from "firebase/firestore";
 import { firestore } from "../../firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../firebase/config";
@@ -20,6 +28,8 @@ const PatientHome = (props) => {
   const [img, setimg] = useState(null);
   const [profiledata, setprofiledata] = useState({});
   const [uid, setuid] = useState(null);
+  const [notify, setnotify] = useState(false);
+  const isFocused = useIsFocused();
   const { authState } = useSelector((state) => ({
     authState: state._persistedReducer.auth,
   }));
@@ -29,6 +39,10 @@ const PatientHome = (props) => {
     }
     fetch();
   }, []);
+  useEffect(() => {
+    setnotify(false);
+    getnotify();
+  }, [isFocused, name]);
   const getProfile = async () => {
     try {
       const docRef = doc(firestore, "users", authState.userId);
@@ -47,6 +61,18 @@ const PatientHome = (props) => {
       console.log(err);
     }
   };
+  async function getnotify() {
+    const itemstore = collection(firestore, "status");
+    const item = query(
+      itemstore,
+      where("name", "==", name),
+      where("status", "==", "unread")
+    );
+    const querySnapshot = await getDocs(item);
+    if (querySnapshot.size > 0) {
+      setnotify(true);
+    }
+  }
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -73,11 +99,30 @@ const PatientHome = (props) => {
         <View style={{ alignItems: "center", marginTop: 100 }}>
           <Text style={{ fontSize: 35, fontWeight: "500" }}>{name}</Text>
         </View>
+        <View>
+          {notify === true ? (
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                backgroundColor: "rgb(255,69,0)",
+                borderRadius: 10,
+                position: "absolute",
+                right: 187,
+                bottom: -27,
+                zIndex: 1,
+              }}
+            ></View>
+          ) : null}
+        </View>
         <View style={styles.menu}>
           <TouchableOpacity
             style={styles.button}
             onPress={() =>
-              props.navigation.navigate("feedback", { uid: authState.userId })
+              props.navigation.navigate("feedback", {
+                uid: authState.userId,
+                name: name,
+              })
             }
           >
             <Text style={{ fontSize: 25, color: "white", fontWeight: "400" }}>

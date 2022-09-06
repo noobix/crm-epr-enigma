@@ -51,9 +51,12 @@ const Registeration = (props) => {
     }
   };
   useEffect(() => {
-    const [first, last] = fullname.split(" ");
-    setfname(first);
-    setlname(last);
+    const parts = fullname.split(" ");
+    setfname(parts.shift());
+    setlname(parts.join(" "));
+    // const [first, last] = fullname.split(" ");
+    // setfname(first);
+    // setlname(last);
   }, [fullname]);
   const handleReg = () => {
     const regdata = {
@@ -67,6 +70,7 @@ const Registeration = (props) => {
       phone: phone,
       email: email.trim(),
     };
+    console.log(regdata);
     if (password !== cpassword) return;
     if (fname === "") return;
     if (lname === "") return;

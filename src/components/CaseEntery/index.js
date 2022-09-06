@@ -21,7 +21,14 @@ import SelectDropdown from "react-native-select-dropdown";
 import { saveCaseDetails } from "../../store/feedbackSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { firestore } from "../../firebase/config";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import moment from "moment";
 
 const CaseList = (props) => {
@@ -85,11 +92,60 @@ const CaseList = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
+      notify(doc.id, obj);
+    });
+  }
+  const notify = async (id, data) => {
+    const itemstore = collection(firestore, "status");
+    const item = query(
+      itemstore,
+      where("name", "==", data.doctor),
+      where("id", "==", id)
+    );
+    const querySnapshot = await getDocs(item);
+    if (querySnapshot.empty) {
+      additionalcases(data.uid, id);
+    }
+    querySnapshot.forEach((doc) => {
+      const obj = doc.data();
       setdataset((dataset) => [
-        { ...obj, name: props.route.params.name, id: doc.id },
         ...dataset,
+        {
+          casetype: data.casetype,
+          date: data.date,
+          diagnosis: data.diagnosis,
+          doctor: data.doctor,
+          id: id,
+          name: data.name,
+          status: data.status,
+          uid: data.uid,
+          notification: obj.status,
+          noteId: doc.id,
+        },
       ]);
     });
+  };
+  async function additionalcases(uid, id) {
+    const docRef = doc(firestore, "case", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists) {
+      const obj = docSnap.data();
+      setdataset((dataset) => [
+        ...dataset,
+        {
+          id: id,
+          casetype: obj.casetype,
+          date: obj.date,
+          diagnosis: obj.diagnosis,
+          name: obj.name,
+          doctor: obj.doctor,
+          status: obj.status,
+          uid: obj.uid,
+          notification: null,
+          noteId: null,
+        },
+      ]);
+    }
   }
   const rendercases = (
     status,
@@ -99,7 +155,9 @@ const CaseList = (props) => {
     name,
     diagnosis,
     id,
-    index
+    index,
+    notification,
+    noteId
   ) => (
     <TouchableOpacity
       key={index}
@@ -111,6 +169,8 @@ const CaseList = (props) => {
           casetype,
           id,
           name,
+          notification,
+          noteId,
         })
       }
     >
@@ -121,8 +181,22 @@ const CaseList = (props) => {
           backgroundColor: "rgb(245,245,245)",
           paddingLeft: 10,
           flexDirection: "row",
+          position: "relative",
         }}
       >
+        {notification === "unread" ? (
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: "rgb(255,69,0)",
+              borderRadius: 10,
+              position: "absolute",
+              right: 30,
+              bottom: 50,
+            }}
+          ></View>
+        ) : null}
         <View style={{ marginTop: 5 }}>
           <View style={{ flexDirection: "row" }}>
             <MaterialIcons
@@ -430,10 +504,24 @@ const CaseList = (props) => {
               {dataset &&
                 dataset
                   .sort((a, b) => a.status.localeCompare(b.status))
-                  .sort((a, b) => (Number(a.date) > Number(b.date) ? 1 : -1))
+                  .sort(
+                    (a, b) =>
+                      new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                      new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+                  )
                   .map(
                     (
-                      { status, doctor, date, casetype, name, diagnosis, id },
+                      {
+                        status,
+                        doctor,
+                        date,
+                        casetype,
+                        name,
+                        diagnosis,
+                        id,
+                        notification,
+                        noteId,
+                      },
                       index
                     ) =>
                       rendercases(
@@ -444,7 +532,9 @@ const CaseList = (props) => {
                         name,
                         diagnosis,
                         id,
-                        index
+                        index,
+                        notification,
+                        noteId
                       )
                   )}
             </ScrollView>

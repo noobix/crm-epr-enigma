@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,26 +24,31 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { saveDoctorReply } from "../../store/feedbackSlice";
+import { saveDoctorReply, saveFeedbackStatus } from "../../store/feedbackSlice";
 import {
   Ionicons,
   AntDesign,
   MaterialIcons,
   FontAwesome,
 } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
 
 const ReplyFeedback = (props) => {
   const [dataset, setdataset] = useState([]);
   const [replyset, setreplyset] = useState([]);
-  const [visible, setvisible] = useState(null);
+  const [visible, setvisible] = useState(false);
   const [messagereply, setmessagereply] = useState("");
   const [msgid, setmsgid] = useState(null);
   const inputref = useRef(null);
+  const isFocused = useIsFocused();
   const dispatch = useDispatch();
   useEffect(() => {
     getfeedback(getreply);
-  }, []);
+    if (props.route.params.notification === "unread") {
+      handleCancelNotification();
+    }
+  }, [isFocused]);
   async function getreply(id) {
     const itemstore = collection(firestore, "feedreply");
     const item = query(itemstore, where("id", "==", id));
@@ -74,9 +80,22 @@ const ReplyFeedback = (props) => {
       message: messagereply,
       id: id,
     };
+    const statusData = {
+      id: props.route.params.id,
+      name: props.route.params.name,
+      status: "unread",
+    };
     dispatch(saveDoctorReply(rMessage));
-    props.navigation.navigate("caselist");
+    dispatch(saveFeedbackStatus(statusData));
+    setdataset([]);
+    setreplyset([]);
+    getfeedback(getreply);
     setvisible(false);
+    // props.navigation.navigate("home");
+  };
+  const handleCancelNotification = async () => {
+    const notificationRef = doc(firestore, "status", props.route.params.noteId);
+    await updateDoc(notificationRef, { status: "read" });
   };
   const handelInputsubmit = useCallback(
     (ev) => {

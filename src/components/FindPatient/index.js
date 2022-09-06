@@ -8,6 +8,7 @@ import {
   Dimensions,
   ScrollView,
   Image,
+  Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons, Octicons, MaterialIcons } from "@expo/vector-icons";
@@ -180,6 +181,7 @@ const FindPatient = (props) => {
     });
   };
   const searchConfig = () => {
+    Keyboard.dismiss();
     switch (searchString) {
       case "f":
         setdataset([]);

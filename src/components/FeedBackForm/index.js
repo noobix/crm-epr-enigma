@@ -6,14 +6,23 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
-  ScrollView,
   Keyboard,
   FlatList,
 } from "react-native";
 import { savePatientFeedback } from "../../store/feedbackSlice";
+import { saveFeedbackStatus } from "../../store/feedbackSlice";
 import { useDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  updateDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
+import { useIsFocused } from "@react-navigation/native";
 import { firestore } from "../../firebase/config";
 import moment from "moment";
 import {
@@ -29,6 +38,7 @@ const FeedBackForm = (props) => {
   const [mesageinput, setmessageinput] = useState("");
   const [xheight, setxheight] = useState(50);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const isFocused = useIsFocused();
   const dispatch = useDispatch();
   function updatexheight(xheight) {
     setxheight(xheight);
@@ -42,12 +52,25 @@ const FeedBackForm = (props) => {
       id: props.route.params.id,
       message: mesageinput,
     };
+    const statusData = {
+      id: props.route.params.id,
+      name: props.route.params.doctor,
+      status: "unread",
+    };
     dispatch(savePatientFeedback(feedData));
-    props.navigation.navigate("feedback");
+    dispatch(saveFeedbackStatus(statusData));
+    setmessageinput("");
+    setfeedlist([]);
+    getFeedlist(getreply);
+    // props.navigation.navigate("home");
   };
   useEffect(() => {
+    setfeedlist([]);
     getFeedlist(getreply);
-  }, []);
+    if (props.route.params.notification === "unread") {
+      handleCancelNotification();
+    }
+  }, [isFocused]);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -66,28 +89,60 @@ const FeedBackForm = (props) => {
       keyboardDidShowListener.remove();
     };
   }, []);
-  async function getreply(id) {
+  const handleCancelNotification = async () => {
+    const notificationRef = doc(firestore, "status", props.route.params.noteId);
+    await updateDoc(notificationRef, { status: "read" });
+  };
+  async function getreply(id, feed) {
     const itemstore = collection(firestore, "feedreply");
     const item = query(itemstore, where("id", "==", id));
     const querySnapshot = await getDocs(item);
+    if (querySnapshot.empty) {
+      supplynoreply(id);
+    }
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      setreplyset((replyset) => [obj, ...replyset]);
+      setfeedlist((feedlist) => [
+        ...feedlist,
+        {
+          id: feed.id,
+          fdate: feed.date,
+          fmessage: feed.message,
+          rdate: obj.date,
+          rmessage: obj.message,
+        },
+      ]);
     });
   }
   async function getFeedlist(func) {
     const itemstore = collection(firestore, "feedback");
     const item = query(itemstore, where("id", "==", props.route.params.id));
     const querySnapshot = await getDocs(item);
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(async (doc) => {
       const obj = doc.data();
-      setfeedlist((feedlist) => [...feedlist, obj]);
-      func(doc.id);
+      // setfeedlist((feedlist) => [...feedlist, obj]);
+      func(doc.id, obj);
     });
   }
-  const renderfeedlist = (date, message, id, index) => (
+  async function supplynoreply(id) {
+    const docRef = doc(firestore, "feedback", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists) {
+      const noreply = docSnap.data();
+      setfeedlist((feedlist) => [
+        ...feedlist,
+        {
+          id: noreply.id,
+          fdate: noreply.date,
+          fmessage: noreply.message,
+          rdate: null,
+          rmessage: null,
+        },
+      ]);
+    }
+  }
+  const renderfeedlist = (date, message, id) => (
     <View
-      key={index}
       style={{
         backgroundColor: "rgb(245,245,245)",
         marginVertical: 5,
@@ -111,9 +166,8 @@ const FeedBackForm = (props) => {
       </Text>
     </View>
   );
-  const renderreply = (item, index) => (
+  const renderreply = (date, message) => (
     <View
-      key={index}
       style={{
         borderWidth: 1,
         marginVertical: 5,
@@ -125,7 +179,7 @@ const FeedBackForm = (props) => {
         padding: 15,
       }}
     >
-      <Text style={{ fontSize: 25 }}>{item.message}</Text>
+      <Text style={{ fontSize: 25 }}>{message}</Text>
       <Text
         style={{
           fontSize: 12,
@@ -133,7 +187,7 @@ const FeedBackForm = (props) => {
           fontWeight: "500",
         }}
       >
-        {moment(new Date(item.date)).startOf("minutes").fromNow()}
+        {moment(new Date(date)).startOf("minutes").fromNow()}
       </Text>
     </View>
   );
@@ -246,26 +300,16 @@ const FeedBackForm = (props) => {
         <FlatList
           data={feedlist.sort(
             (a, b) =>
-              new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-              new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+              new moment(new Date(a.fdate)).format("YYYYMMDD HHmmss") -
+              new moment(new Date(b.fdate)).format("YYYYMMDD HHmmss")
           )}
           keyExtractor={(item, index) => {
             return index;
           }}
-          renderItem={({ item: { date, message, id } }) => (
+          renderItem={({ item: { id, fmessage, fdate, rdate, rmessage } }) => (
             <React.Fragment>
-              {renderfeedlist(date, message, id)}
-              <ScrollView keyboardShouldPersistTaps="handled">
-                {replyset &&
-                  replyset
-                    .sort(
-                      (a, b) =>
-                        new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-                        new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-                    )
-                    .filter((item) => item.id === id)
-                    .map((item, index) => renderreply(item, index))}
-              </ScrollView>
+              {rdate && rmessage ? renderreply(rdate, rmessage) : null}
+              {renderfeedlist(fdate, fmessage, id)}
             </React.Fragment>
           )}
         />
@@ -279,6 +323,7 @@ const FeedBackForm = (props) => {
             }
             multiline
             numberOfLines={6}
+            value={mesageinput}
             scrollEnabled
             style={{
               height: xheight,

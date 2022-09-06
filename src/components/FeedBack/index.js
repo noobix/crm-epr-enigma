@@ -8,25 +8,45 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { useIsFocused } from "@react-navigation/native";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 import { firestore } from "../../firebase/config";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
+import moment from "moment";
 
 const FeedBack = (props) => {
   const [dataset, setdataset] = useState([]);
+  const isFocused = useIsFocused();
   useEffect(() => {
+    setdataset([]);
     getCases();
-  }, []);
+  }, [isFocused]);
   async function getCases() {
     const itemstore = collection(firestore, "case");
     const item = query(itemstore, where("uid", "==", props.route.params.uid));
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      setdataset((dataset) => [{ ...obj, id: doc.id }, ...dataset]);
+      notify(doc.id, obj);
+      // setdataset((dataset) => [{ ...obj, id: doc.id }, ...dataset]);
     });
   }
-  const feedbackvalidity = (status, doctor, date, casetype, id) => {
+  const feedbackvalidity = (
+    status,
+    doctor,
+    date,
+    casetype,
+    id,
+    notification,
+    noteId
+  ) => {
     if (status === "Close") {
       return;
     }
@@ -36,12 +56,86 @@ const FeedBack = (props) => {
       date,
       casetype,
       id,
+      notification,
+      noteId,
     });
   };
-  const rendercaselist = (casetype, date, doctor, status, id, index) => (
+  const notify = async (id, data) => {
+    const itemstore = collection(firestore, "status");
+    const item = query(
+      itemstore,
+      where("name", "==", props.route.params.name),
+      where("id", "==", id),
+      where("status", "==", "unread")
+    );
+    const querySnapshot = await getDocs(item);
+    if (querySnapshot.empty) {
+      additionalcases(data.uid, id);
+    }
+    querySnapshot.forEach((doc) => {
+      const obj = doc.data();
+      setdataset((dataset) => [
+        ...dataset,
+        {
+          id: id,
+          casetype: data.casetype,
+          date: data.date,
+          diagnosis: data.diagnosis,
+          name: data.name,
+          doctor: data.doctor,
+          status: data.status,
+          uid: data.uid,
+          notification: obj.status,
+          noteId: doc.id,
+        },
+      ]);
+    });
+  };
+  async function additionalcases(uid, id) {
+    const docRef = doc(firestore, "case", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists) {
+      const obj = docSnap.data();
+      setdataset((dataset) => [
+        ...dataset,
+        {
+          id: id,
+          casetype: obj.casetype,
+          date: obj.date,
+          diagnosis: obj.diagnosis,
+          name: obj.name,
+          doctor: obj.doctor,
+          status: obj.status,
+          uid: obj.uid,
+          notification: null,
+          noteId: null,
+        },
+      ]);
+    }
+  }
+  const rendercaselist = (
+    casetype,
+    date,
+    doctor,
+    status,
+    id,
+    index,
+    notification,
+    noteId
+  ) => (
     <TouchableOpacity
       key={index}
-      onPress={() => feedbackvalidity(status, doctor, date, casetype, id)}
+      onPress={() =>
+        feedbackvalidity(
+          status,
+          doctor,
+          date,
+          casetype,
+          id,
+          notification,
+          noteId
+        )
+      }
     >
       <View
         style={{
@@ -56,6 +150,19 @@ const FeedBack = (props) => {
           position: "relative",
         }}
       >
+        {notification === "unread" ? (
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              backgroundColor: "rgb(255,69,0)",
+              borderRadius: 10,
+              position: "absolute",
+              right: 30,
+              bottom: 50,
+            }}
+          ></View>
+        ) : null}
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <Text style={{ color: "rgb(128,128,128)", fontSize: 20 }}>
             Date of visit
@@ -135,9 +242,26 @@ const FeedBack = (props) => {
           {dataset &&
             dataset
               .sort((a, b) => a.status.localeCompare(b.status))
-              .sort((a, b) => (Number(a.date) > Number(b.date) ? 1 : -1))
-              .map(({ casetype, date, doctor, status, id }, index) =>
-                rendercaselist(casetype, date, doctor, status, id, index)
+              .sort(
+                (a, b) =>
+                  new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                  new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
+              )
+              .map(
+                (
+                  { casetype, date, doctor, status, id, notification, noteId },
+                  index
+                ) =>
+                  rendercaselist(
+                    casetype,
+                    date,
+                    doctor,
+                    status,
+                    id,
+                    index,
+                    notification,
+                    noteId
+                  )
               )}
         </ScrollView>
       </SafeAreaView>

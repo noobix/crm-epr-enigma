@@ -8,8 +8,10 @@ import { Profile } from "../components/Profile";
 import { FindPatient } from "../components/FindPatient";
 import { CaseList } from "../components/CaseEntery/index";
 import { FeedBack } from "../components/FeedBack";
+import { NewsFeed } from "../components/NewsFeed";
 import { FeedBackForm } from "../components/FeedBackForm";
 import { ReplyFeedback } from "../components/ReplyFeedback";
+import { FetchNotification } from "../components/FetchNotification";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
 import { auth } from "../firebase/config";
@@ -83,11 +85,16 @@ const Router = () => {
       <NativeStack.Navigator screenOptions={{ headerShown: false }}>
         <NativeStack.Screen name="home" children={authNav} />
         <NativeStack.Screen name="profile" component={Profile} />
+        <NativeStack.Screen name="newsfeed" component={NewsFeed} />
         <NativeStack.Screen name="findpatient" component={FindPatient} />
         <NativeStack.Screen name="caselist" component={CaseList} />
         <NativeStack.Screen name="feedback" component={FeedBack} />
         <NativeStack.Screen name="feedbackform" component={FeedBackForm} />
         <NativeStack.Screen name="replyfeedback" component={ReplyFeedback} />
+        <NativeStack.Screen
+          name="fetchnotification"
+          component={FetchNotification}
+        />
       </NativeStack.Navigator>
     </NavigationContainer>
   );
