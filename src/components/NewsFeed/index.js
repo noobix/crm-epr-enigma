@@ -10,54 +10,56 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 
 const NewsFeed = (props) => {
   const [rssfeed, setrssfeed] = useState(null);
   const [feedname, setfeedname] = useState(null);
   useEffect(() => {
-    getnewsfeed();
+    getnewsfeed()
+      .then((res) => {
+        if (res) {
+          setrssfeed(res.data.items);
+          // console.log(rssfeed);
+        }
+      })
+      .catch((error) => console.log(error));
   }, []);
-  useEffect(() => {
-    console.log(rssfeed);
-  }, [rssfeed]);
-
   async function getnewsfeed() {
-    const request = new XMLHttpRequest();
-    request.onreadystatechange = () => {
-      if (request.readyState == 4 && request.status == 200) {
-        const response = JSON.parse(request.responseText);
-        setfeedname(response.feed.title);
-        console.log(response);
-        Object.entries(response).map(({ items: { title, thumbnail } }) =>
-          console.log(title)
-        );
-        //   setrssfeed((rssfeed) => [
-        //       ...rssfeed,
-        //     {
-        //       title: items.title,
-        //       image: items.thumbnail,
-        //     },
-        //   ]);
-      }
-    };
-    request.open(
-      "GET",
-      "https://api.rss2json.com/v1/api.json?rss_url=http%3A%2F%2Ffeeds2.feedburner.com%2FLatestGeneralNews",
-      true
-    );
-    request.send();
+    try {
+      return await axios.get(
+        "https://api.rss2json.com/v1/api.json?rss_url=http%3A%2F%2Ffeeds2.feedburner.com%2FLatestGeneralNews"
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
-  const renderfeed = (title, image) => (
-    <View
-      style={{
-        borderWidth: 1,
-        borderColor: "rgb(109, 123, 175)",
-        flexDirection: "row",
-      }}
+  const RenderFeed = ({ title, image, read }) => (
+    <TouchableOpacity
+      onPress={() => props.navigation.navigate("readnewsfeed", { read })}
     >
-      <Image source={{ uri: image }} style={{ height: 120, width: 120 }} />
-      <Text>{title}</Text>
-    </View>
+      <View
+        style={{
+          borderWidth: 1,
+          borderColor: "rgb(109, 123, 175)",
+          flexDirection: "row",
+          marginVertical: 5,
+          alignItems: "center",
+        }}
+      >
+        <Image source={{ uri: image }} style={{ height: 120, width: 120 }} />
+        <Text
+          style={{
+            fontSize: 20,
+            flex: 1,
+            marginLeft: 10,
+            color: "rgb(109, 123, 175)",
+          }}
+        >
+          {title}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
   return (
     <React.Fragment>
@@ -80,7 +82,9 @@ const NewsFeed = (props) => {
           keyExtractor={(item, index) => {
             return index;
           }}
-          renderItem={({ item: { title, image } }) => renderfeed(title, image)}
+          renderItem={({ item: { title, thumbnail, link } }) => (
+            <RenderFeed title={title} image={thumbnail} read={link} />
+          )}
         />
       </SafeAreaView>
     </React.Fragment>

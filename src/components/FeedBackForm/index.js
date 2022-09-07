@@ -308,8 +308,8 @@ const FeedBackForm = (props) => {
           }}
           renderItem={({ item: { id, fmessage, fdate, rdate, rmessage } }) => (
             <React.Fragment>
-              {rdate && rmessage ? renderreply(rdate, rmessage) : null}
               {renderfeedlist(fdate, fmessage, id)}
+              {rdate && rmessage ? renderreply(rdate, rmessage) : null}
             </React.Fragment>
           )}
         />

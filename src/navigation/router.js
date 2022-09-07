@@ -12,6 +12,7 @@ import { NewsFeed } from "../components/NewsFeed";
 import { FeedBackForm } from "../components/FeedBackForm";
 import { ReplyFeedback } from "../components/ReplyFeedback";
 import { FetchNotification } from "../components/FetchNotification";
+import { ReadFeed } from "../components/NewsFeedRead";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
 import { auth } from "../firebase/config";
@@ -95,6 +96,7 @@ const Router = () => {
           name="fetchnotification"
           component={FetchNotification}
         />
+        <NativeStack.Screen name="readnewsfeed" component={ReadFeed} />
       </NativeStack.Navigator>
     </NavigationContainer>
   );

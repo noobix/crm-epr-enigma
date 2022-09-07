@@ -129,9 +129,12 @@ const PatientHome = (props) => {
               Treatment
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => props.navigation.navigate("newsfeed")}
+          >
             <Text style={{ fontSize: 25, color: "white", fontWeight: "400" }}>
-              Appointment
+              News Feed
             </Text>
           </TouchableOpacity>
         </View>

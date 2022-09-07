@@ -4,7 +4,6 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Button,
   TextInput,
   Dimensions,
   ScrollView,
@@ -106,24 +105,27 @@ const CaseList = (props) => {
     if (querySnapshot.empty) {
       additionalcases(data.uid, id);
     }
+    const dom = new Array();
+    let newdata;
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      setdataset((dataset) => [
-        ...dataset,
-        {
-          casetype: data.casetype,
-          date: data.date,
-          diagnosis: data.diagnosis,
-          doctor: data.doctor,
-          id: id,
-          name: data.name,
-          status: data.status,
-          uid: data.uid,
-          notification: obj.status,
-          noteId: doc.id,
-        },
-      ]);
+      newdata = {
+        casetype: data.casetype,
+        date: data.date,
+        diagnosis: data.diagnosis,
+        doctor: data.doctor,
+        id: id,
+        name: data.name,
+        status: data.status,
+        uid: data.uid,
+        notification: obj.status,
+        noteId: doc.id,
+      };
+      const exist = dom.some((o) => o.id === id);
+      if (!exist) dom.push(newdata);
     });
+    console.log(dom);
+    setdataset((dataset) => [...dataset, newdata]);
   };
   async function additionalcases(uid, id) {
     const docRef = doc(firestore, "case", id);
@@ -503,7 +505,7 @@ const CaseList = (props) => {
             <ScrollView>
               {dataset &&
                 dataset
-                  .sort((a, b) => a.status.localeCompare(b.status))
+                  // .sort((a, b) => a.status.localeCompare(b.status))
                   .sort(
                     (a, b) =>
                       new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
