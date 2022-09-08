@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  TextInput,
+  ToastAndroid,
   Text,
   TouchableOpacity,
   Dimensions,
@@ -20,9 +20,22 @@ const Login = (props) => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const dispatch = useDispatch();
+  const showToast = (message) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
   const handleSignIn = () => {
-    if (email === "") return;
-    if (password === "") return;
+    if (email === "") {
+      showToast("Please enter email");
+      return;
+    }
+    if (password === "") {
+      showToast("Please enter password");
+      return;
+    }
     const details = { email: email.trim(), password: password };
     dispatch(signInUser(details));
   };
