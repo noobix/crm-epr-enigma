@@ -5,6 +5,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
+import { ToastAndroid } from "react-native";
 import { auth, firestore, storage } from "../../firebase/config";
 import { login, userid } from "../authSlice";
 
@@ -35,7 +36,13 @@ export const signInUser = createAsyncThunk(
         auth,
         email,
         password
-      );
+      ).catch((err) => {
+        err.code === "auth/user-not-found"
+          ? showToast("Account not found Please register")
+          : err.code === "auth/wrong-password"
+          ? showToast("Wrong password Try again")
+          : showToast(err.message);
+      });
       const uid = userCredentails.user.uid;
       const docRef = doc(firestore, "users", uid);
       const docSnap = await getDoc(docRef);
@@ -48,6 +55,13 @@ export const signInUser = createAsyncThunk(
     }
   }
 );
+const showToast = (message) => {
+  ToastAndroid.showWithGravity(
+    message,
+    ToastAndroid.SHORT,
+    ToastAndroid.CENTER
+  );
+};
 const uploadProfileImage = async (uid, image) => {
   try {
     const blob = await new Promise((resolve, reject) => {

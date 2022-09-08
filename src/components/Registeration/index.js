@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Dimensions,
+  ToastAndroid,
 } from "react-native";
 import COLORS from "./colors.js";
 import Input from "./input";
@@ -16,6 +17,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { registerUser } from "../../store/userSlice";
 import * as ImagePicker from "expo-image-picker";
+import moment from "moment";
 
 const Registeration = (props) => {
   const onChangeDate = (event, selectedDate) => {
@@ -50,14 +52,13 @@ const Registeration = (props) => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    const parts = fullname.split(" ");
-    setfname(parts.shift());
-    setlname(parts.join(" "));
-    // const [first, last] = fullname.split(" ");
-    // setfname(first);
-    // setlname(last);
-  }, [fullname]);
+  const showToast = (message) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
   const handleReg = () => {
     const regdata = {
       userType: type,
@@ -71,12 +72,30 @@ const Registeration = (props) => {
       email: email.trim(),
     };
     console.log(regdata);
-    if (password !== cpassword) return;
-    if (fname === "") return;
-    if (lname === "") return;
-    if (type === null) return;
-    if (gender === null) return;
-    if (status === null) return;
+    if (password !== cpassword) {
+      showToast("Password does not match");
+      return;
+    }
+    if (fname === "") {
+      showToast("First name required");
+      return;
+    }
+    if (lname === "") {
+      showToast("LastName required");
+      return;
+    }
+    if (type === null) {
+      showToast("Please choose marrital status");
+      return;
+    }
+    if (gender === null) {
+      showToast("Please choose gender");
+      return;
+    }
+    if (status === null) {
+      showToast("Please Choose registration type");
+      return;
+    }
     dispatch(registerUser({ email, password, regdata, image }));
     props.navigation.navigate("login");
   };
@@ -87,7 +106,6 @@ const Registeration = (props) => {
   const [status, setstatus] = useState(null);
   const [type, settype] = useState(null);
   const [date, setdate] = useState(new Date());
-  const [birthday, setbirthday] = useState(new Date());
   const [fname, setfname] = useState("");
   const [lname, setlname] = useState("");
   const [fullname, setfullname] = useState("");
@@ -96,7 +114,9 @@ const Registeration = (props) => {
   const [password, setpassword] = useState("");
   const [cpassword, setcpassword] = useState("");
   const [phone, setphone] = useState("");
-  const [image, setimage] = useState(null);
+  const [image, setimage] = useState(
+    require("../../assets/images/1077114.png")
+  );
   const dispatch = useDispatch();
   return (
     <React.Fragment>
@@ -197,15 +217,28 @@ const Registeration = (props) => {
                 }}
                 onPress={() => showDatepicker()}
               >
-                <Text
-                  style={{
-                    color: COLORS.grey,
-                    alignSelf: "center",
-                    fontSize: 22,
-                  }}
-                >
-                  Select date
-                </Text>
+                {moment(new Date(date)).format("MMMM d YYYY") ===
+                moment(new Date()).format("MMMM d YYYY") ? (
+                  <Text
+                    style={{
+                      color: COLORS.grey,
+                      alignSelf: "center",
+                      fontSize: 22,
+                    }}
+                  >
+                    Select date
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      color: COLORS.grey,
+                      alignSelf: "center",
+                      fontSize: 22,
+                    }}
+                  >
+                    {moment(new Date(date)).format("MMMM Do YYYY")}
+                  </Text>
+                )}
               </TouchableOpacity>
               {show && (
                 <DateTimePicker
