@@ -4,16 +4,13 @@ import { Provider } from "react-redux";
 import store, { persistor } from "./src/store";
 import { LogBox } from "react-native";
 import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
-import { useEffect } from "react";
 
 LogBox.ignoreLogs([
   "AsyncStorage has been extracted from react-native core and will be removed in a future release.",
 ]);
+LogBox.ignoreLogs(["Warning: ..."]);
+LogBox.ignoreAllLogs();
 export default function App() {
-  useEffect(() => {
-    console.ignoredYellowBox = ["Warning: Each", "Warning: Failed"];
-    console.disableYellowBox = true;
-  }, []);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
