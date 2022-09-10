@@ -90,6 +90,7 @@ const ReplyFeedback = (props) => {
     setdataset([]);
     setreplyset([]);
     getfeedback(getreply);
+    setmessagereply("");
     setvisible(false);
     // props.navigation.navigate("home");
   };
@@ -399,6 +400,7 @@ const ReplyFeedback = (props) => {
           }}
           renderItem={({ item: { id, message, date } }) => (
             <React.Fragment>
+              {renderfeedback(id, message, date)}
               <ScrollView keyboardShouldPersistTaps="handled">
                 {replyset &&
                   replyset
@@ -410,7 +412,6 @@ const ReplyFeedback = (props) => {
                     .filter((item) => item.id === id)
                     .map((item, index) => renderreply(item, index))}
               </ScrollView>
-              {renderfeedback(id, message, date)}
             </React.Fragment>
           )}
         />

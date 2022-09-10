@@ -21,7 +21,9 @@ export const registerUser = createAsyncThunk(
       const uid = userCredentails.user.uid;
       const control = { ...regdata, uid: uid };
       await uploadProfileImage(uid, image);
-      await setDoc(doc(firestore, "users", uid), control);
+      await setDoc(doc(firestore, "users", uid), control).catch((err) =>
+        showToast(err.message)
+      );
     } catch (e) {
       console.log(e);
     }

@@ -62,16 +62,20 @@ const Registeration = (props) => {
   const handleReg = () => {
     const regdata = {
       userType: type,
-      firstName: fname,
-      lastName: lname,
+      firstName: fname.trim(),
+      lastName: lname.trim(),
       gender: gender,
       marritalStatus: status,
       dateOfBirth: date,
       address: address,
       phone: phone,
-      email: email.trim(),
+      email: email.trim().toLowerCase(),
     };
-    console.log(regdata);
+    // console.log(regdata);
+    if (image === null) {
+      showToast("Please choose profile image");
+      return;
+    }
     if (password !== cpassword) {
       showToast("Password does not match");
       return;
@@ -85,7 +89,7 @@ const Registeration = (props) => {
       return;
     }
     if (type === null) {
-      showToast("Please choose marrital status");
+      showToast("Please Choose registration type");
       return;
     }
     if (gender === null) {
@@ -93,7 +97,7 @@ const Registeration = (props) => {
       return;
     }
     if (status === null) {
-      showToast("Please Choose registration type");
+      showToast("Please choose marrital status");
       return;
     }
     dispatch(registerUser({ email, password, regdata, image }));
@@ -114,9 +118,7 @@ const Registeration = (props) => {
   const [password, setpassword] = useState("");
   const [cpassword, setcpassword] = useState("");
   const [phone, setphone] = useState("");
-  const [image, setimage] = useState(
-    require("../../assets/images/1077114.png")
-  );
+  const [image, setimage] = useState(null);
   const dispatch = useDispatch();
   return (
     <React.Fragment>

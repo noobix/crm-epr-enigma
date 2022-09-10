@@ -30,7 +30,7 @@ const Profile = (props) => {
     }
     return zeroString + n;
   }
-  const unformatedate = props.route.params.dateOfBirth;
+  const unformatedate = props.route.params?.dateOfBirth;
   const rdate = new Date(unformatedate);
   const day = zeroPad(rdate.getDate(), 2);
   const month = zeroPad(rdate.getMonth() + 1, 2);
@@ -58,7 +58,9 @@ const Profile = (props) => {
         <View style={styles.profilehead}>
           <Image
             style={{ width: 90, height: 90, borderRadius: 45, marginLeft: 16 }}
-            source={{ uri: props.route.params.image }}
+            source={{
+              uri: props.route.params?.image,
+            }}
           />
           <View style={{ justifyContent: "center", marginLeft: 10 }}>
             <Text
@@ -66,10 +68,10 @@ const Profile = (props) => {
                 fontSize: 20,
               }}
             >
-              {props.route.params.firstName} {props.route.params.lastName}
+              {props.route.params?.firstName} {props.route.params?.lastName}
             </Text>
             <Text style={{ fontSize: 20, color: "rgb(169,169,169)" }}>
-              {props.route.params.email}
+              {props.route.params?.email}
             </Text>
           </View>
         </View>
@@ -89,7 +91,7 @@ const Profile = (props) => {
                 fontWeight: "500",
               }}
             >
-              {props.route.params.gender}
+              {props.route.params?.gender}
             </Text>
           </View>
           <View style={{ flexDirection: "row", marginVertical: 10 }}>
@@ -125,7 +127,7 @@ const Profile = (props) => {
                 fontWeight: "500",
               }}
             >
-              {props.route.params.address}
+              {props.route.params?.address}
             </Text>
           </View>
           <View style={{ flexDirection: "row", marginVertical: 10 }}>
@@ -139,7 +141,7 @@ const Profile = (props) => {
                 fontWeight: "500",
               }}
             >
-              {props.route.params.phone}
+              {props.route.params?.phone}
             </Text>
           </View>
         </View>

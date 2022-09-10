@@ -124,7 +124,6 @@ const CaseList = (props) => {
       const exist = dom.some((o) => o.id === id);
       if (!exist) dom.push(newdata);
     });
-    console.log(dom);
     setdataset((dataset) => [...dataset, newdata]);
   };
   async function additionalcases(uid, id) {
@@ -142,7 +141,7 @@ const CaseList = (props) => {
           name: obj.name,
           doctor: obj.doctor,
           status: obj.status,
-          uid: obj.uid,
+          uid: uid,
           notification: null,
           noteId: null,
         },
@@ -505,7 +504,7 @@ const CaseList = (props) => {
             <ScrollView>
               {dataset &&
                 dataset
-                  // .sort((a, b) => a.status.localeCompare(b.status))
+                  .sort((a, b) => a.status.localeCompare(b.status))
                   .sort(
                     (a, b) =>
                       new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -

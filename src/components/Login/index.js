@@ -36,7 +36,7 @@ const Login = (props) => {
       showToast("Please enter password");
       return;
     }
-    const details = { email: email.trim(), password: password };
+    const details = { email: email.trim().toLowerCase(), password: password };
     dispatch(signInUser(details));
   };
   return (
