@@ -91,7 +91,6 @@ const CaseList = (props) => {
     showMode("date");
   };
   async function getCases() {
-    console.log(uid);
     const itemstore = collection(firestore, "case");
     const item = query(itemstore, where("uid", "==", props.route.params.uid));
     const querySnapshot = await getDocs(item);
