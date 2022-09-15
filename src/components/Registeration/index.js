@@ -59,16 +59,29 @@ const Registeration = (props) => {
       ToastAndroid.CENTER
     );
   };
+  useEffect(() => {
+    setsysid(() => randomString(7));
+  }, []);
+  function randomString(len, charSet) {
+    charSet = charSet || "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var randomString = "";
+    for (var i = 0; i < len; i++) {
+      var randomPoz = Math.floor(Math.random() * charSet.length);
+      randomString += charSet.substring(randomPoz, randomPoz + 1);
+    }
+    return randomString;
+  }
   const handleReg = () => {
     const regdata = {
+      systemId: sysid,
       userType: type,
       firstName: fname.trim(),
       lastName: lname.trim(),
       gender: gender,
       marritalStatus: status,
       dateOfBirth: date,
-      address: address,
-      phone: phone,
+      address: address.trim(),
+      phone: phone.trim(),
       email: email.trim().toLowerCase(),
     };
     // console.log(regdata);
@@ -104,6 +117,7 @@ const Registeration = (props) => {
     props.navigation.navigate("login");
   };
 
+  const [sysid, setsysid] = useState(null);
   const [show, setshow] = useState(false);
   const [mode, setmode] = useState(null);
   const [gender, setgender] = useState(null);
@@ -126,6 +140,21 @@ const Registeration = (props) => {
         <KeyboardAwareScrollView>
           <View style={styles.formcontainer}>
             <Text style={styles.intotext}>Registration</Text>
+            <Text style={styles.formlable}>System Id</Text>
+            <View
+              style={{ backgroundColor: COLORS.light, height: 40, width: 370 }}
+            >
+              <Text
+                style={{
+                  color: COLORS.grey,
+                  fontSize: 22,
+                  justifyContent: "center",
+                  alignSelf: "center",
+                }}
+              >
+                {sysid}
+              </Text>
+            </View>
             <View style={{ marginTop: 10 }}>
               <Text style={styles.formlable}>Type</Text>
               <SelectDropdown

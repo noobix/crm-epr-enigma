@@ -111,6 +111,7 @@ const FetchNotification = (props) => {
           name,
           notification,
           noteId,
+          doctor,
         })
       }
     >

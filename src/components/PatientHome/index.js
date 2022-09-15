@@ -194,6 +194,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "rgb(225,225,225)",
     alignItems: "flex-end",
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   profileimg: {
     width: 140,
@@ -221,8 +223,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(220,220,220))",
     marginVertical: 3,
     borderRadius: 10,
-    width: 330,
-    height: 190,
+    width: "90%",
+    height: "35%",
     marginLeft: 15,
     marginTop: 30,
   },
@@ -240,7 +242,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   appointmentbtn: {
-    width: 270,
+    width: "155%",
     height: 50,
     backgroundColor: "rgb(109, 123, 175)",
     color: "rgb(255,255,255)",
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 20,
     position: "absolute",
-    right: -40,
+    right: -25,
     top: 10,
   },
   doctornametext: {

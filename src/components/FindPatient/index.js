@@ -10,22 +10,50 @@ import {
   Image,
   Keyboard,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from "react-native";
-import { Ionicons, Octicons, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  Octicons,
+  MaterialIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SelectDropdown from "react-native-select-dropdown";
 import moment from "moment";
 import { firestore } from "../../firebase/config";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { storage } from "../../firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 const FindPatient = (props) => {
+  const [advsearch, setadvsearch] = useState(false);
   const [lname, setlname] = useState("");
   const [fname, setfname] = useState("");
+  const [sysid, setsysid] = useState("");
   const [gender, setgender] = useState(null);
   const [dataset, setdataset] = useState([]);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const dropdownref = useRef({});
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   let searchString = "";
   if (fname !== "") {
     searchString += "f";
@@ -41,6 +69,24 @@ const FindPatient = (props) => {
     setlname("");
     dropdownref.current.reset();
     setdataset([]);
+  };
+  const searchId = async () => {
+    const itemstore = collection(firestore, "users");
+    const item = query(
+      itemstore,
+      where("systemId", "==", sysid.trim().toUpperCase())
+    );
+    const querySnapshot = await getDocs(item);
+    querySnapshot.forEach(async (doc) => {
+      const obj = doc.data();
+      const { dateOfBirth } = obj;
+      const formateddate = moment(new Date(dateOfBirth)).format("MMMM Do YYYY");
+      const url = await getDownloadURL(ref(storage, `images/${obj.uid}`));
+      setdataset((dataset) => [
+        { ...obj, image: url, formatedDate: formateddate },
+        ...dataset,
+      ]);
+    });
   };
   const singleSearchF = async () => {
     const itemstore = collection(firestore, "users");
@@ -235,17 +281,24 @@ const FindPatient = (props) => {
         onStartShouldSetResponder={() => true}
         style={{
           marginVertical: 10,
+          marginHorizontal: 10,
           borderWidth: 1,
           borderColor: "rgb(109, 123, 175)",
-          width: "100%",
-          height: 150,
+          width: "95%",
+          height: 135,
           backgroundColor: "rgb(225,225,225)",
+          borderRadius: 20,
           flexDirection: "row",
         }}
       >
         <Image
           source={{ uri: image }}
-          style={{ width: 130, height: 130, marginTop: 10 }}
+          style={{
+            width: 110,
+            height: 134,
+            borderBottomLeftRadius: 20,
+            borderTopLeftRadius: 20,
+          }}
         />
         <View style={{ marginHorizontal: 10 }}>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
@@ -293,108 +346,228 @@ const FindPatient = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <View style={styles.search}>
-          <TouchableOpacity onPress={() => props.navigation.goBack()}>
-            <Ionicons
-              style={{ marginLeft: 16 }}
-              name="arrow-back"
-              size={30}
-              color="black"
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.form}>
-          <View>
-            <TextInput
-              placeholder="Search first name"
-              style={{
-                width: 230,
-                height: 40,
-                backgroundColor: "rgb(255,255,255)",
-                fontSize: 20,
-                marginTop: 10,
-                borderWidth: 1,
-                borderColor: "rgb(109, 123, 175)",
-                padding: 5,
-              }}
-              value={fname}
-              onChangeText={(text) => setfname(text)}
-            />
-            <TextInput
-              placeholder="Search last name"
-              style={{
-                width: 230,
-                height: 40,
-                backgroundColor: "rgb(255,255,255)",
-                fontSize: 20,
-                marginTop: 5,
-                borderWidth: 1,
-                borderColor: "rgb(109, 123, 175)",
-                padding: 5,
-              }}
-              onChangeText={(text) => setlname(text)}
-              value={lname}
-            />
-            <SelectDropdown
-              buttonStyle={{
-                height: 40,
-                backgroundColor: "rgb(255,255,255)",
-                marginTop: 5,
-                width: 230,
-                borderWidth: 1,
-                borderColor: "rgb(109, 123, 175)",
-              }}
-              ref={dropdownref}
-              defaultButtonText="Select gender"
-              data={["Male", "Female"]}
-              onSelect={(selectedItem, index) => {
-                setgender(selectedItem);
-              }}
-              buttonTextAfterSelection={(selectedItem, index) => {
-                return selectedItem;
-              }}
-              rowTextForSelection={(item, index) => {
-                return item;
-              }}
-            />
-          </View>
-          <View
-            style={{ flexDirection: "column", marginTop: 10, marginLeft: 10 }}
-          >
-            <TouchableOpacity
-              style={{
-                marginBottom: 5,
-                width: 95,
-                height: 40,
-                backgroundColor: "rgb(255,255,255)",
-                borderWidth: 1,
-                borderColor: "rgb(109, 123, 175)",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onPress={() => reset()}
-            >
-              <MaterialIcons
-                name="clear"
-                size={40}
-                color="rgb(109, 123, 175)"
+        {!isKeyboardVisible ? (
+          <View style={styles.search}>
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Ionicons
+                style={{ marginLeft: 16 }}
+                name="arrow-back"
+                size={30}
+                color="black"
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: 95,
-                height: 85,
-                backgroundColor: "rgb(109, 123, 175)",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onPress={() => searchConfig()}
-            >
-              <Ionicons name="search" size={60} color="rgb(255,255,255)" />
-            </TouchableOpacity>
           </View>
-        </View>
-        <ScrollView>
+        ) : null}
+        <KeyboardAvoidingView behavior="height" style={{ flex: 0.2 }}>
+          {advsearch ? (
+            <View
+              style={{
+                width: "100%",
+                height: "65%",
+                backgroundColor: "rgb(245,245,245)",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  paddingHorizontal: 16,
+                  justifyContent: "space-between",
+                }}
+              >
+                <TextInput
+                  placeholder="Search first name"
+                  style={{
+                    width: "45%",
+                    height: 45,
+                    backgroundColor: "rgb(255,255,255)",
+                    fontSize: 20,
+                    marginTop: 10,
+                    borderWidth: 1,
+                    borderColor: "rgb(109, 123, 175)",
+                    backgroundColor: "rgb(230,230,250)",
+                    padding: 5,
+                  }}
+                  value={fname}
+                  onChangeText={(text) => setfname(text)}
+                />
+                <TextInput
+                  placeholder="Search last name"
+                  style={{
+                    width: "45%",
+                    height: 45,
+                    backgroundColor: "rgb(255,255,255)",
+                    fontSize: 20,
+                    marginTop: 5,
+                    marginTop: 10,
+                    borderWidth: 1,
+                    borderColor: "rgb(109, 123, 175)",
+                    backgroundColor: "rgb(230,230,250)",
+                    padding: 5,
+                  }}
+                  onChangeText={(text) => setlname(text)}
+                  value={lname}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  paddingHorizontal: 16,
+                  marginTop: 5,
+                  justifyContent: "space-between",
+                }}
+              >
+                <SelectDropdown
+                  buttonStyle={{
+                    height: 40,
+                    backgroundColor: "rgb(230,230,250)",
+                    marginTop: 5,
+                    width: "45%",
+                    borderWidth: 1,
+                    borderColor: "rgb(109, 123, 175)",
+                  }}
+                  buttonTextStyle={{ color: "rgb(169,169,169))" }}
+                  ref={dropdownref}
+                  defaultButtonText="Select gender"
+                  data={["Male", "Female"]}
+                  onSelect={(selectedItem, index) => {
+                    setgender(selectedItem);
+                  }}
+                  buttonTextAfterSelection={(selectedItem, index) => {
+                    return selectedItem;
+                  }}
+                  rowTextForSelection={(item, index) => {
+                    return item;
+                  }}
+                />
+                <TouchableOpacity
+                  style={{
+                    height: 40,
+                    width: "20%",
+                    marginTop: 5,
+                    marginLeft: 30,
+                    alignItems: "center",
+                    backgroundColor: "rgb(109, 123, 175)",
+                  }}
+                  onPress={() => searchConfig()}
+                >
+                  <Ionicons name="search" size={23} color="rgb(255,255,255)" />
+                  <Text
+                    style={{
+                      color: "rgb(255,255,255)",
+                      fontSize: 12,
+                      alignSelf: "center",
+                    }}
+                  >
+                    Search
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    height: 40,
+                    width: "20%",
+                    marginTop: 5,
+                    alignItems: "center",
+                    backgroundColor: "rgb(109, 123, 175)",
+                  }}
+                  onPress={() => setadvsearch(false)}
+                >
+                  <MaterialIcons
+                    name="expand-less"
+                    size={25}
+                    color="rgb(255,255,255)"
+                  />
+                  <Text
+                    style={{
+                      color: "rgb(255,255,255)",
+                      fontSize: 12,
+                      alignSelf: "center",
+                    }}
+                  >
+                    ID Search
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <View
+              style={{
+                width: "100%",
+                height: "30%",
+                backgroundColor: "rgb(245,245,245)",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <TextInput
+                placeholder="Enter ID number"
+                autoCapitalize={"characters"}
+                style={{
+                  width: "45%",
+                  height: 45,
+                  marginTop: 10,
+                  marginLeft: 16,
+                  padding: 5,
+                  borderWidth: 1,
+                  fontSize: 20,
+                  fontWeight: "500",
+                  letterSpacing: 2,
+                  borderColor: "rgb(109, 123, 175)",
+                  backgroundColor: "rgb(230,230,250)",
+                }}
+                onChangeText={(text) => setsysid(text)}
+                value={sysid}
+              />
+              <TouchableOpacity
+                style={{
+                  height: 43,
+                  width: "16%",
+                  marginTop: 10,
+                  alignItems: "center",
+                  backgroundColor: "rgb(109, 123, 175)",
+                }}
+                onPress={() => searchId()}
+              >
+                <Ionicons name="search" size={25} color="rgb(255,255,255)" />
+                <Text
+                  style={{
+                    color: "rgb(255,255,255)",
+                    fontSize: 12,
+                    alignSelf: "center",
+                  }}
+                >
+                  Search
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  height: 43,
+                  width: "17%",
+                  marginTop: 10,
+                  marginRight: 16,
+                  alignItems: "center",
+                  backgroundColor: "rgb(109, 123, 175)",
+                }}
+                onPress={() => setadvsearch(true)}
+              >
+                <AntDesign
+                  name="caretdown"
+                  size={25}
+                  color="rgb(255,255,255)"
+                />
+                <Text
+                  style={{
+                    color: "rgb(255,255,255)",
+                    fontSize: 12,
+                    alignSelf: "center",
+                  }}
+                >
+                  Adv Search
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </KeyboardAvoidingView>
+        <ScrollView style={{ flex: 1, marginTop: 15 }}>
           {dataset &&
             dataset.map(
               (
@@ -430,12 +603,5 @@ const styles = StyleSheet.create({
     height: "15%",
     backgroundColor: "rgb(225,225,225)",
     justifyContent: "flex-end",
-  },
-  form: {
-    paddingHorizontal: 16,
-    backgroundColor: "rgb(245,245,245)",
-    width: "100%",
-    height: "25%",
-    flexDirection: "row",
   },
 });

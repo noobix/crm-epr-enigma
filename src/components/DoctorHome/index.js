@@ -99,6 +99,7 @@ const DoctorHome = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.notification}
+            hitSlop={{ top: 60, bottom: 40, left: 60, right: 40 }}
             onPress={() =>
               props.navigation.navigate("fetchnotification", { name: name })
             }
@@ -145,7 +146,7 @@ const DoctorHome = (props) => {
           </TouchableOpacity>
         </View>
         <View style={styles.menu}>
-          <View style={{ flexDirection: "row", marginTop: 15 }}>
+          <View style={{ flexDirection: "row", marginTop: 30 }}>
             <View
               style={{
                 width: 80,
@@ -165,7 +166,7 @@ const DoctorHome = (props) => {
             </View>
             <TouchableOpacity
               style={{
-                width: 243,
+                width: "75%",
                 height: 60,
                 alignItems: "center",
                 justifyContent: "center",
@@ -182,7 +183,7 @@ const DoctorHome = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <View style={{ flexDirection: "row", marginTop: 20 }}>
             <View
               style={{
                 width: 80,
@@ -202,7 +203,7 @@ const DoctorHome = (props) => {
             </View>
             <TouchableOpacity
               style={{
-                width: 243,
+                width: "75%",
                 height: 60,
                 alignItems: "center",
                 justifyContent: "center",
@@ -219,7 +220,7 @@ const DoctorHome = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <View style={{ flexDirection: "row", marginTop: 20 }}>
             <View
               style={{
                 width: 80,
@@ -235,7 +236,7 @@ const DoctorHome = (props) => {
             </View>
             <TouchableOpacity
               style={{
-                width: 243,
+                width: "75%",
                 height: 60,
                 alignItems: "center",
                 justifyContent: "center",

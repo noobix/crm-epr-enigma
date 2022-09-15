@@ -8,6 +8,8 @@ import {
   Dimensions,
   Keyboard,
   FlatList,
+  ToastAndroid,
+  KeyboardAvoidingView,
 } from "react-native";
 import { savePatientFeedback } from "../../store/feedbackSlice";
 import { saveFeedbackStatus } from "../../store/feedbackSlice";
@@ -21,6 +23,7 @@ import {
   query,
   where,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import { useIsFocused } from "@react-navigation/native";
 import { firestore } from "../../firebase/config";
@@ -33,13 +36,33 @@ import {
 } from "@expo/vector-icons";
 
 const FeedBackForm = (props) => {
+  const [details, setdetails] = useState(false);
   const [feedlist, setfeedlist] = useState([]);
   const [replyset, setreplyset] = useState([]);
+  const [name, setname] = useState(props.route.params.name);
   const [mesageinput, setmessageinput] = useState("");
   const [xheight, setxheight] = useState(50);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   function updatexheight(xheight) {
     setxheight(xheight);
   }
@@ -64,33 +87,44 @@ const FeedBackForm = (props) => {
     getFeedlist(getreply);
     // props.navigation.navigate("home");
   };
+  const monitoring = query(
+    collection(firestore, "status"),
+    where("status", "==", "unread"),
+    where("name", "==", name)
+  );
+  const unsubscribe = () => {
+    onSnapshot(monitoring, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          if (!isFocused) {
+            showToast("Incoming message");
+            setfeedlist([]);
+            getFeedlist(getreply);
+            handleCancelNotification(change.doc.id);
+          }
+        }
+      });
+    });
+  };
+  useEffect(() => {
+    unsubscribe();
+  }, []);
   useEffect(() => {
     setfeedlist([]);
     getFeedlist(getreply);
     if (props.route.params.notification === "unread") {
-      handleCancelNotification();
+      handleCancelNotification(props.route.params.noteId);
     }
   }, [isFocused]);
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setKeyboardVisible(true); // or some other action
-      }
+  const showToast = (message) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
     );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardVisible(false); // or some other action
-      }
-    );
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-  const handleCancelNotification = async () => {
-    const notificationRef = doc(firestore, "status", props.route.params.noteId);
+  };
+  const handleCancelNotification = async (id) => {
+    const notificationRef = doc(firestore, "status", id);
     await updateDoc(notificationRef, { status: "read" });
   };
   async function getreply(id, feed) {
@@ -148,18 +182,23 @@ const FeedBackForm = (props) => {
         marginVertical: 5,
         alignItems: "flex-end",
         marginLeft: 70,
+        marginRight: 7,
         borderWidth: 1,
         borderColor: "rgb(109, 123, 175)",
         flexBasis: "auto",
         padding: 15,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomLeftRadius: 20,
       }}
     >
-      <Text style={{ fontSize: 25 }}>{message}</Text>
+      <Text style={{ fontSize: 20 }}>{message}</Text>
       <Text
         style={{
           fontSize: 12,
           color: "rgb(109, 123, 175)",
-          fontWeight: "500",
+          fontWeight: "600",
+          marginTop: 5,
         }}
       >
         {moment(new Date(date)).startOf("minute").fromNow()}
@@ -176,15 +215,20 @@ const FeedBackForm = (props) => {
         flexBasis: "auto",
         alignItems: "flex-start",
         marginRight: 70,
+        marginLeft: 7,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
         padding: 15,
       }}
     >
-      <Text style={{ fontSize: 25 }}>{message}</Text>
+      <Text style={{ fontSize: 20 }}>{message}</Text>
       <Text
         style={{
           fontSize: 12,
           color: "rgb(109, 123, 175)",
-          fontWeight: "500",
+          fontWeight: "600",
+          marginTop: 5,
         }}
       >
         {moment(new Date(date)).startOf("minutes").fromNow()}
@@ -194,125 +238,146 @@ const FeedBackForm = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        {!isKeyboardVisible ? (
-          <React.Fragment>
-            <View style={styles.form}>
-              <View style={styles.formdetails}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginLeft: 10,
-                    marginTop: 10,
-                    alignItems: "center",
-                  }}
-                >
-                  <AntDesign name="calendar" size={15} color="rgb(47,79,79)" />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      marginLeft: 15,
-                      color: "rgb(128,128,128)",
-                    }}
-                  >
-                    {props.route.params.date}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginLeft: 10,
-                    marginTop: 5,
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name="options" size={15} color="rgb(47,79,79)" />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      marginLeft: 15,
-                      color: "rgb(128,128,128)",
-                    }}
-                  >
-                    {props.route.params.casetype}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginLeft: 10,
-                    marginTop: 5,
-                    alignItems: "center",
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="doctor"
-                    size={15}
-                    color="rgb(47,79,79)"
-                  />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      marginLeft: 15,
-                      color: "rgb(128,128,128)",
-                    }}
-                  >
-                    {props.route.params.doctor}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginLeft: 10,
-                    marginTop: 5,
-                    alignItems: "center",
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="list-status"
-                    size={15}
-                    color="rgb(47,79,79)"
-                  />
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      marginLeft: 15,
-                      color: "rgb(128,128,128)",
-                    }}
-                  >
-                    {props.route.params.status}
-                  </Text>
-                </View>
-              </View>
-              <TouchableOpacity
-                style={{ marginTop: 15 }}
-                onPress={() => props.navigation.goBack()}
+        {!isKeyboardVisible && details ? (
+          <View style={styles.moreinfo}>
+            <View
+              style={{
+                flexDirection: "row",
+                marginLeft: 10,
+                marginTop: 5,
+                alignItems: "center",
+              }}
+            >
+              <AntDesign name="calendar" size={15} color="rgb(47,79,79)" />
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginLeft: 15,
+                  color: "rgb(128,128,128)",
+                }}
               >
-                <Ionicons
-                  style={{ marginLeft: 16 }}
-                  name="arrow-back"
-                  size={30}
-                  color="black"
-                />
-              </TouchableOpacity>
+                {props.route.params.date}
+              </Text>
             </View>
-          </React.Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                marginLeft: 10,
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="options" size={15} color="rgb(47,79,79)" />
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginLeft: 15,
+                  color: "rgb(128,128,128)",
+                }}
+              >
+                {props.route.params.casetype}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                marginLeft: 10,
+                alignItems: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="doctor"
+                size={15}
+                color="rgb(47,79,79)"
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginLeft: 15,
+                  color: "rgb(128,128,128)",
+                }}
+              >
+                {props.route.params.doctor}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                marginLeft: 10,
+                alignItems: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="list-status"
+                size={15}
+                color="rgb(47,79,79)"
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginLeft: 15,
+                  color: "rgb(128,128,128)",
+                }}
+              >
+                {props.route.params.status}
+              </Text>
+            </View>
+          </View>
+        ) : !isKeyboardVisible && !details ? (
+          <View style={styles.lessinfo}>
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Ionicons
+                style={{ marginLeft: 16 }}
+                name="arrow-back"
+                size={30}
+                color="rgb(47,79,79)"
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "500",
+                color: "rgb(128,128,128)",
+              }}
+            >
+              Dr. {props.route.params.doctor}
+            </Text>
+            <TouchableOpacity onPress={() => setdetails(true)}>
+              <Ionicons
+                style={{ marginRight: 16 }}
+                name="information-circle-outline"
+                size={30}
+                color="rgb(47,79,79)"
+              />
+            </TouchableOpacity>
+          </View>
         ) : null}
         <FlatList
-          data={feedlist.sort(
-            (a, b) =>
-              new moment(new Date(a.fdate)).format("YYYYMMDD HHmmss") -
-              new moment(new Date(b.fdate)).format("YYYYMMDD HHmmss")
-          )}
+          style={{
+            width: "100%",
+            height: "70%",
+            borderBottomLeftRadius: 30,
+            borderBottomRightRadius: 30,
+            backgroundColor: "rgb(255,255,255)",
+          }}
+          inverted
+          data={[...feedlist]
+            .reverse()
+            .sort(
+              (a, b) =>
+                new moment(new Date(a.fdate)).format("YYYYMMDD HHmmss") -
+                new moment(new Date(b.fdate)).format("YYYYMMDD HHmmss")
+            )}
           keyExtractor={(item, index) => {
             return index;
           }}
           renderItem={({ item: { id, fmessage, fdate, rdate, rmessage } }) => (
             <React.Fragment>
-              {renderfeedlist(fdate, fmessage, id)}
               {rdate && rmessage ? renderreply(rdate, rmessage) : null}
+              {renderfeedlist(fdate, fmessage, id)}
             </React.Fragment>
           )}
         />
+
         <View style={{ flexDirection: "row" }}>
           <TextInput
             autoCorrect
@@ -327,9 +392,10 @@ const FeedBackForm = (props) => {
             scrollEnabled
             style={{
               height: xheight,
-              width: "90%",
+              width: "85%",
               backgroundColor: "rgb(245,245,245)",
-              marginTop: 20,
+              marginLeft: 10,
+              marginTop: 10,
               fontSize: 20,
               borderWidth: 1,
               borderColor: "rgb(109, 123, 175)",
@@ -343,7 +409,7 @@ const FeedBackForm = (props) => {
               height: 50,
               alignItems: "flex-start",
               justifyContent: "flex-end",
-              marginTop: 20,
+              marginTop: 3,
             }}
             onPress={() => handleSaveFeedback()}
           >
@@ -361,18 +427,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: window.width,
     height: window.height,
-    backgroundColor: "rgb(255,255,255)",
-    position: "relative",
+    backgroundColor: "rgb(235,235,235)",
   },
-  form: {
+  lessinfo: {
+    height: "10%",
     width: "100%",
-    height: "25%",
-    backgroundColor: "rgb(225,225,225)",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  formdetails: {
+  moreinfo: {
+    height: "15%",
     width: "100%",
-    height: "65%",
-    backgroundColor: "rgb(255,255,255)",
-    borderBottomRightRadius: 70,
   },
 });

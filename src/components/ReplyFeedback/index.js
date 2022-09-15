@@ -8,10 +8,8 @@ import {
   Dimensions,
   TextInput,
   Keyboard,
-  KeyboardAvoidingView,
   TouchableOpacity,
-  ScrollView,
-  Image,
+  ToastAndroid,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,8 +19,10 @@ import {
   query,
   doc,
   where,
+  getDoc,
   getDocs,
   updateDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { saveDoctorReply, saveFeedbackStatus } from "../../store/feedbackSlice";
 import {
@@ -35,9 +35,10 @@ import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
 
 const ReplyFeedback = (props) => {
+  const [details, setdetails] = useState(false);
   const [dataset, setdataset] = useState([]);
-  const [replyset, setreplyset] = useState([]);
   const [visible, setvisible] = useState(false);
+  const [name, setname] = useState(props.route.params.doctor);
   const [messagereply, setmessagereply] = useState("");
   const [msgid, setmsgid] = useState(null);
   const inputref = useRef(null);
@@ -46,16 +47,28 @@ const ReplyFeedback = (props) => {
   useEffect(() => {
     getfeedback(getreply);
     if (props.route.params.notification === "unread") {
-      handleCancelNotification();
+      handleCancelNotification(props.route.params.noteId);
     }
   }, [isFocused]);
-  async function getreply(id) {
+  async function getreply(id, feed) {
     const itemstore = collection(firestore, "feedreply");
     const item = query(itemstore, where("id", "==", id));
     const querySnapshot = await getDocs(item);
+    if (querySnapshot.empty) {
+      supplynoreply(id);
+    }
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      setreplyset((replyset) => [obj, ...replyset]);
+      setdataset((dataset) => [
+        ...dataset,
+        {
+          id: obj.id,
+          fdate: feed.date,
+          fmessage: feed.message,
+          rdate: obj.date,
+          rmessage: obj.message,
+        },
+      ]);
     });
   }
   async function getfeedback(func) {
@@ -64,13 +77,48 @@ const ReplyFeedback = (props) => {
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      setdataset((dataset) => [
-        { ...obj, name: props.route.params.name, id: doc.id },
-        ...dataset,
-      ]);
-      func(doc.id);
+      func(doc.id, obj);
     });
   }
+  async function supplynoreply(id) {
+    const docRef = doc(firestore, "feedback", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists) {
+      const noreply = docSnap.data();
+      setdataset((dataset) => [
+        ...dataset,
+        {
+          id: docSnap.id,
+          fdate: noreply.date,
+          fmessage: noreply.message,
+          rdate: null,
+          rmessage: null,
+        },
+      ]);
+    }
+  }
+  const monitoring = query(
+    collection(firestore, "status"),
+    where("status", "==", "unread"),
+    where("name", "==", name)
+  );
+  const unsubscribe = () => {
+    onSnapshot(monitoring, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          if (!isFocused) {
+            showToast("Incoming message");
+            setdataset([]);
+            getfeedback(getreply);
+            handleCancelNotification(change.doc.id);
+          }
+        }
+      });
+    });
+  };
+  useEffect(() => {
+    unsubscribe();
+  }, []);
   const handleSaveReply = (id) => {
     Keyboard.dismiss();
     if (messagereply.trim() === "") {
@@ -88,14 +136,20 @@ const ReplyFeedback = (props) => {
     dispatch(saveDoctorReply(rMessage));
     dispatch(saveFeedbackStatus(statusData));
     setdataset([]);
-    setreplyset([]);
     getfeedback(getreply);
     setmessagereply("");
     setvisible(false);
     // props.navigation.navigate("home");
   };
-  const handleCancelNotification = async () => {
-    const notificationRef = doc(firestore, "status", props.route.params.noteId);
+  const showToast = (message) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+  const handleCancelNotification = async (id) => {
+    const notificationRef = doc(firestore, "status", id);
     await updateDoc(notificationRef, { status: "read" });
   };
   const handelInputsubmit = useCallback(
@@ -114,10 +168,9 @@ const ReplyFeedback = (props) => {
     setmsgid(id);
     setvisible(true);
   }
-  const renderfeedback = (id, message, date, index) => (
+  const renderfeedback = (id, date, message) => (
     <TouchableOpacity
       onPress={() => processreply(id)}
-      key={index}
       style={{
         borderWidth: 1,
         marginVertical: 5,
@@ -126,9 +179,13 @@ const ReplyFeedback = (props) => {
         flexBasis: "auto",
         padding: 15,
         marginRight: 70,
+        marginLeft: 7,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
       }}
     >
-      <Text style={{ fontSize: 25 }}>{message}</Text>
+      <Text style={{ fontSize: 20 }}>{message}</Text>
       <Text
         style={{
           fontSize: 12,
@@ -140,9 +197,8 @@ const ReplyFeedback = (props) => {
       </Text>
     </TouchableOpacity>
   );
-  const renderreply = (item, index) => (
+  const renderreply = (date, message) => (
     <View
-      key={index}
       style={{
         borderWidth: 1,
         marginVertical: 5,
@@ -151,11 +207,15 @@ const ReplyFeedback = (props) => {
         flexBasis: "auto",
         alignItems: "flex-start",
         marginLeft: 70,
+        marginRight: 7,
         padding: 15,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderBottomLeftRadius: 20,
       }}
     >
       <View key={"fyt"}>
-        <Text style={{ fontSize: 25 }}>{item.message}</Text>
+        <Text style={{ fontSize: 20 }}>{message}</Text>
         <Text
           style={{
             fontSize: 12,
@@ -163,7 +223,7 @@ const ReplyFeedback = (props) => {
             fontWeight: "500",
           }}
         >
-          {moment(new Date(item.date)).startOf("minutes").fromNow()}
+          {moment(new Date(date)).startOf("minutes").fromNow()}
         </Text>
       </View>
     </View>
@@ -195,90 +255,89 @@ const ReplyFeedback = (props) => {
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView behavior="height">
-          <ModalPopup visible={visible}>
+        <ModalPopup visible={visible}>
+          <View
+            style={{
+              width: "90%",
+              height: "72%",
+              backgroundColor: "rgb(255,255,255)",
+              borderRadius: 30,
+            }}
+          >
             <View
               style={{
-                width: "90%",
-                height: "72%",
-                backgroundColor: "rgb(255,255,255)",
+                flexDirection: "row",
+                justifyContent: "center",
               }}
             >
-              <View
+              <TextInput
+                placeholder="Enter Reply"
+                ref={inputref}
+                multiline
+                autoCorrect
+                scrollEnabled
+                numberOfLines={8}
+                autoCapitalize="sentences"
+                placeholderTextColor="rgb(0,191,255)"
+                defaultValue={messagereply}
+                onEndEditing={handelInputsubmit}
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
+                  width: "100%",
+                  height: 250,
+                  fontSize: 20,
+                  padding: 20,
+                  textAlignVertical: "top",
+                  backgroundColor: "rgb(245,245,245)",
+                  borderRadius: 30,
                 }}
-              >
-                <TextInput
-                  placeholder="Enter Reply"
-                  ref={inputref}
-                  multiline
-                  autoCorrect
-                  scrollEnabled
-                  numberOfLines={8}
-                  autoCapitalize="sentences"
-                  placeholderTextColor="rgb(0,191,255)"
-                  defaultValue={messagereply}
-                  onEndEditing={handelInputsubmit}
-                  style={{
-                    width: "100%",
-                    height: 250,
-                    fontSize: 20,
-                    padding: 10,
-                    textAlignVertical: "top",
-                    backgroundColor: "rgb(245,245,245)",
-                  }}
-                />
-              </View>
-              <View
-                style={{
-                  marginTop: 15,
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    width: 65,
-                    height: 65,
-                    borderRadius: 30,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "rgb(109, 123, 175)",
-                  }}
-                  onPress={() => setvisible(false)}
-                >
-                  <MaterialIcons
-                    name="cancel"
-                    size={50}
-                    color="rgb(225,225,225)"
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleSaveReply(msgid)}
-                  style={{
-                    width: 65,
-                    height: 65,
-                    borderRadius: 30,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "rgb(109, 123, 175)",
-                  }}
-                >
-                  <Ionicons name="send" size={40} color="rgb(255,255,255)" />
-                </TouchableOpacity>
-              </View>
+              />
             </View>
-          </ModalPopup>
-        </KeyboardAvoidingView>
-        <View style={styles.feedbackreply}>
-          <View style={styles.replydetails}>
+            <View
+              style={{
+                marginTop: 15,
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  width: 65,
+                  height: 65,
+                  borderRadius: 30,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgb(109, 123, 175)",
+                }}
+                onPress={() => setvisible(false)}
+              >
+                <MaterialIcons
+                  name="cancel"
+                  size={50}
+                  color="rgb(225,225,225)"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleSaveReply(msgid)}
+                style={{
+                  width: 65,
+                  height: 65,
+                  borderRadius: 30,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgb(109, 123, 175)",
+                }}
+              >
+                <Ionicons name="send" size={40} color="rgb(255,255,255)" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ModalPopup>
+        {details ? (
+          <View style={styles.moreinfo}>
             <View
               style={{
                 flexDirection: "row",
                 marginLeft: 10,
-                marginTop: 10,
                 alignItems: "center",
               }}
             >
@@ -297,7 +356,6 @@ const ReplyFeedback = (props) => {
               style={{
                 flexDirection: "row",
                 marginLeft: 10,
-                marginTop: 5,
                 alignItems: "center",
               }}
             >
@@ -316,7 +374,6 @@ const ReplyFeedback = (props) => {
               style={{
                 flexDirection: "row",
                 marginLeft: 10,
-                marginTop: 5,
                 alignItems: "center",
               }}
             >
@@ -335,7 +392,6 @@ const ReplyFeedback = (props) => {
               style={{
                 flexDirection: "row",
                 marginLeft: 10,
-                marginTop: 5,
                 alignItems: "center",
               }}
             >
@@ -355,63 +411,69 @@ const ReplyFeedback = (props) => {
               </Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={{ marginTop: 15 }}
-            onPress={() => props.navigation.goBack()}
-          >
-            <Ionicons
-              style={{ marginLeft: 16 }}
-              name="arrow-back"
-              size={30}
-              color="black"
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            alignSelf: "flex-end",
-            marginHorizontal: 5,
-            marginTop: 5,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              width: 100,
-              height: 35,
-              backgroundColor: "rgb(109, 123, 175)",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onPress={() => handleCaseupdate()}
-          >
-            <Text style={{ color: "rgb(255,255,255)", fontSize: 25 }}>
-              Close
+        ) : (
+          <View style={styles.lessinfo}>
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Ionicons
+                style={{ marginLeft: 16 }}
+                name="arrow-back"
+                size={30}
+                color="rgb(47,79,79)"
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "500",
+                color: "rgb(128,128,128)",
+              }}
+            >
+              {props.route.params.name}
             </Text>
-          </TouchableOpacity>
-        </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity onPress={() => setdetails(true)}>
+                <Ionicons
+                  style={{ marginRight: 10 }}
+                  name="information-circle-outline"
+                  size={30}
+                  color="rgb(47,79,79)"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleCaseupdate()}>
+                <AntDesign
+                  name="closecircle"
+                  style={{ marginRight: 16 }}
+                  size={24}
+                  color="rgb(255,69,0)"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
         <FlatList
-          data={dataset.sort(
-            (a, b) =>
-              new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-              new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-          )}
+          style={{
+            flex: 0.6,
+            width: "100%",
+            height: "70%",
+            borderBottomLeftRadius: 30,
+            borderBottomRightRadius: 30,
+            backgroundColor: "rgb(255,255,255)",
+          }}
+          inverted
+          data={[...dataset]
+            .reverse()
+            .sort(
+              (a, b) =>
+                new moment(new Date(a.fdate)).format("YYYYMMDD HHmmss") -
+                new moment(new Date(b.fdate)).format("YYYYMMDD HHmmss")
+            )}
           keyExtractor={(item, index) => {
             return index;
           }}
-          renderItem={({ item: { id, message, date } }) => (
+          renderItem={({ item: { id, fmessage, fdate, rdate, rmessage } }) => (
             <React.Fragment>
-              {renderfeedback(id, message, date)}
-              <ScrollView keyboardShouldPersistTaps="handled">
-                {replyset &&
-                  replyset
-                    .sort(
-                      (a, b) =>
-                        new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
-                        new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
-                    )
-                    .filter((item) => item.id === id)
-                    .map((item, index) => renderreply(item, index))}
-              </ScrollView>
+              {rdate && rmessage ? renderreply(rdate, rmessage) : null}
+              {renderfeedback(id, fdate, fmessage)}
             </React.Fragment>
           )}
         />
@@ -426,19 +488,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: window.width,
     height: window.height,
-    backgroundColor: "rgb(255,255,255)",
+    backgroundColor: "rgb(235,235,235)",
+  },
+  lessinfo: {
+    flex: 0.1,
+    height: "10%",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
   },
-  feedbackreply: {
+  moreinfo: {
+    flex: 0.15,
+    height: "15%",
     width: "100%",
-    height: "25%",
-    backgroundColor: "rgb(225,225,225)",
-  },
-  replydetails: {
-    width: "100%",
-    height: "65%",
-    backgroundColor: "rgb(255,255,255)",
-    borderBottomRightRadius: 70,
   },
 });

@@ -58,6 +58,7 @@ const FeedBack = (props) => {
       id,
       notification,
       noteId,
+      name: props.route.params.name,
     });
   };
   const notify = async (id, data) => {
@@ -72,24 +73,27 @@ const FeedBack = (props) => {
     if (querySnapshot.empty) {
       additionalcases(data.uid, id);
     }
+    const dom = new Array();
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      setdataset((dataset) => [
-        ...dataset,
-        {
-          id: id,
-          casetype: data.casetype,
-          date: data.date,
-          diagnosis: data.diagnosis,
-          name: data.name,
-          doctor: data.doctor,
-          status: data.status,
-          uid: data.uid,
-          notification: obj.status,
-          noteId: doc.id,
-        },
-      ]);
+      const newdata = {
+        id: id,
+        casetype: data.casetype,
+        date: data.date,
+        diagnosis: data.diagnosis,
+        name: data.name,
+        doctor: data.doctor,
+        status: data.status,
+        uid: data.uid,
+        notification: obj.status,
+        noteId: doc.id,
+      };
+      const exist = dom.some((o) => o.id === id);
+      if (!exist) dom.push(newdata);
     });
+    for (let i = 0; i < dom.length; i++) {
+      setdataset((dataset) => [...dataset, dom[i]]);
+    }
   };
   async function additionalcases(uid, id) {
     const docRef = doc(firestore, "case", id);

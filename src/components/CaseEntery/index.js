@@ -15,6 +15,7 @@ import {
   Fontisto,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import SelectDropdown from "react-native-select-dropdown";
 import { saveCaseDetails } from "../../store/feedbackSlice";
@@ -44,6 +45,7 @@ const CaseList = (props) => {
     authState: state._persistedReducer.auth,
   }));
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   async function getuser() {
     const itemstore = collection(firestore, "users");
     const item = query(itemstore, where("uid", "==", authState.userId));
@@ -54,9 +56,10 @@ const CaseList = (props) => {
     });
   }
   useEffect(() => {
+    setdataset([]);
     getCases();
     getuser();
-  }, []);
+  }, [isFocused]);
   const handleCreateCase = () => {
     if (diagnosis === "") {
       return;
@@ -106,10 +109,9 @@ const CaseList = (props) => {
       additionalcases(data.uid, id);
     }
     const dom = new Array();
-    let newdata;
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
-      newdata = {
+      const newdata = {
         casetype: data.casetype,
         date: data.date,
         diagnosis: data.diagnosis,
@@ -124,7 +126,9 @@ const CaseList = (props) => {
       const exist = dom.some((o) => o.id === id);
       if (!exist) dom.push(newdata);
     });
-    setdataset((dataset) => [...dataset, newdata]);
+    for (let i = 0; i < dom.length; i++) {
+      setdataset((dataset) => [...dataset, dom[i]]);
+    }
   };
   async function additionalcases(uid, id) {
     const docRef = doc(firestore, "case", id);
@@ -172,6 +176,7 @@ const CaseList = (props) => {
           name,
           notification,
           noteId,
+          doctor,
         })
       }
     >
