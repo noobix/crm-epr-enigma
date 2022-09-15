@@ -46,7 +46,6 @@ const ReplyFeedback = (props) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log(props.route.params.uid);
     setreduce((reduce) => reduce + 1);
     getfeedback(getreply);
     if (props.route.params.notification === "unread") {
