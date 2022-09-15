@@ -95,8 +95,9 @@ const FeedBackForm = (props) => {
   const unsubscribe = () => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
+        showToast("Incoming message");
         if (change.type === "added") {
-          showToast("Incoming message");
+          console.log("me");
           setfeedlist([]);
           getFeedlist(getreply);
           // handleCancelNotification(change.doc.id);
@@ -108,10 +109,12 @@ const FeedBackForm = (props) => {
     unsubscribe();
   }, []);
   useEffect(() => {
-    setfeedlist([]);
-    getFeedlist(getreply);
+    if (props.route.params.notification === "read") {
+      setfeedlist([]);
+      getFeedlist(getreply);
+    }
     if (props.route.params.notification === "unread") {
-      handleCancelNotification(props.route.params.noteId);
+      handleCancelNotification();
     }
   }, [isFocused]);
   const showToast = (message) => {
@@ -121,8 +124,8 @@ const FeedBackForm = (props) => {
       ToastAndroid.CENTER
     );
   };
-  const handleCancelNotification = async (id) => {
-    const notificationRef = doc(firestore, "status", id);
+  const handleCancelNotification = async () => {
+    const notificationRef = doc(firestore, "status", props.route.params.noteId);
     await updateDoc(notificationRef, { status: "read" });
   };
   async function getreply(id, feed) {

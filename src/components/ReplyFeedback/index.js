@@ -45,9 +45,11 @@ const ReplyFeedback = (props) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   useEffect(() => {
-    getfeedback(getreply);
+    if (props.route.params.notification === "read") {
+      getfeedback(getreply);
+    }
     if (props.route.params.notification === "unread") {
-      handleCancelNotification(props.route.params.noteId);
+      handleCancelNotification();
     }
   }, [isFocused]);
   async function getreply(id, feed) {
@@ -146,8 +148,8 @@ const ReplyFeedback = (props) => {
       ToastAndroid.CENTER
     );
   };
-  const handleCancelNotification = async (id) => {
-    const notificationRef = doc(firestore, "status", id);
+  const handleCancelNotification = async () => {
+    const notificationRef = doc(firestore, "status", props.route.params.noteId);
     await updateDoc(notificationRef, { status: "read" });
   };
   const handelInputsubmit = useCallback(
