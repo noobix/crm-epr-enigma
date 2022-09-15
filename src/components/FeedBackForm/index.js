@@ -38,7 +38,7 @@ import {
 const FeedBackForm = (props) => {
   const [details, setdetails] = useState(false);
   const [feedlist, setfeedlist] = useState([]);
-  const [replyset, setreplyset] = useState([]);
+  const [reduce, setreduce] = useState(0);
   const [name, setname] = useState(props.route.params.name);
   const [mesageinput, setmessageinput] = useState("");
   const [xheight, setxheight] = useState(50);
@@ -96,11 +96,12 @@ const FeedBackForm = (props) => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         showToast("Incoming message");
-        if (change.type === "added") {
-          console.log("me");
-          setfeedlist([]);
-          getFeedlist(getreply);
-          // handleCancelNotification(change.doc.id);
+        if (reduce > 1) {
+          if (change.type === "added") {
+            setfeedlist([]);
+            getFeedlist(getreply);
+            // handleCancelNotification(change.doc.id);
+          }
         }
       });
     });
@@ -109,10 +110,9 @@ const FeedBackForm = (props) => {
     unsubscribe();
   }, []);
   useEffect(() => {
-    if (props.route.params.notification === "read") {
-      setfeedlist([]);
-      getFeedlist(getreply);
-    }
+    setreduce((reduce) => reduce + 1);
+    setfeedlist([]);
+    getFeedlist(getreply);
     if (props.route.params.notification === "unread") {
       handleCancelNotification();
     }

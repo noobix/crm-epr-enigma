@@ -38,6 +38,7 @@ const CaseList = (props) => {
   const [mode, setmode] = useState(null);
   const [date, setdate] = useState(new Date());
   const [diagnosis, setdiagnosis] = useState("");
+  const [uid, setuid] = useState(null);
   const [doctor, setdoctor] = useState(null);
   const [casetype, setcasetype] = useState(null);
   const [status, setstatus] = useState(null);
@@ -56,6 +57,7 @@ const CaseList = (props) => {
     });
   }
   useEffect(() => {
+    setuid(props.route.params.uid);
     setdataset([]);
     getCases();
     getuser();
@@ -71,7 +73,7 @@ const CaseList = (props) => {
       diagnosis: diagnosis,
       casetype: casetype,
       status: status,
-      uid: props.route.params.uid,
+      uid: uid,
     };
     dispatch(saveCaseDetails(caseData));
     props.navigation.navigate("findpatient");
@@ -90,7 +92,7 @@ const CaseList = (props) => {
   };
   async function getCases() {
     const itemstore = collection(firestore, "case");
-    const item = query(itemstore, where("uid", "==", props.route.params.uid));
+    const item = query(itemstore, where("uid", "==", uid));
     const querySnapshot = await getDocs(item);
     querySnapshot.forEach((doc) => {
       const obj = doc.data();
@@ -177,6 +179,7 @@ const CaseList = (props) => {
           notification,
           noteId,
           doctor,
+          uid,
         })
       }
     >

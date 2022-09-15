@@ -37,6 +37,7 @@ import moment from "moment";
 const ReplyFeedback = (props) => {
   const [details, setdetails] = useState(false);
   const [dataset, setdataset] = useState([]);
+  const [reduce, setreduce] = useState(0);
   const [visible, setvisible] = useState(false);
   const [name, setname] = useState(props.route.params.doctor);
   const [messagereply, setmessagereply] = useState("");
@@ -45,9 +46,9 @@ const ReplyFeedback = (props) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   useEffect(() => {
-    if (props.route.params.notification === "read") {
-      getfeedback(getreply);
-    }
+    console.log(props.route.params.uid);
+    setreduce((reduce) => reduce + 1);
+    getfeedback(getreply);
     if (props.route.params.notification === "unread") {
       handleCancelNotification();
     }
@@ -107,11 +108,13 @@ const ReplyFeedback = (props) => {
   const unsubscribe = () => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          showToast("Incoming message");
-          setdataset([]);
-          getfeedback(getreply);
-          // handleCancelNotification(change.doc.id);
+        if (reduce > 1) {
+          if (change.type === "added") {
+            showToast("Incoming message");
+            setdataset([]);
+            getfeedback(getreply);
+            // handleCancelNotification(change.doc.id);
+          }
         }
       });
     });
@@ -162,7 +165,7 @@ const ReplyFeedback = (props) => {
   const handleCaseupdate = async () => {
     const caseRef = doc(firestore, "case", props.route.params.id);
     await updateDoc(caseRef, { status: "Close" });
-    props.navigation.navigate("caselist");
+    props.navigation.navigate("caselist", { uid: props.route.params.uid });
   };
   function processreply(id) {
     setmsgid(id);
