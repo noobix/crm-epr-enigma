@@ -106,12 +106,10 @@ const ReplyFeedback = (props) => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
-          if (!isFocused) {
-            showToast("Incoming message");
-            setdataset([]);
-            getfeedback(getreply);
-            // handleCancelNotification(change.doc.id);
-          }
+          showToast("Incoming message");
+          setdataset([]);
+          getfeedback(getreply);
+          // handleCancelNotification(change.doc.id);
         }
       });
     });

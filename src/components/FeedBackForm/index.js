@@ -96,12 +96,10 @@ const FeedBackForm = (props) => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
-          if (!isFocused) {
-            showToast("Incoming message");
-            setfeedlist([]);
-            getFeedlist(getreply);
-            // handleCancelNotification(change.doc.id);
-          }
+          showToast("Incoming message");
+          setfeedlist([]);
+          getFeedlist(getreply);
+          // handleCancelNotification(change.doc.id);
         }
       });
     });
