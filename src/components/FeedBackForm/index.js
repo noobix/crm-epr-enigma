@@ -100,7 +100,7 @@ const FeedBackForm = (props) => {
             showToast("Incoming message");
             setfeedlist([]);
             getFeedlist(getreply);
-            handleCancelNotification(change.doc.id);
+            // handleCancelNotification(change.doc.id);
           }
         }
       });

@@ -110,7 +110,7 @@ const ReplyFeedback = (props) => {
             showToast("Incoming message");
             setdataset([]);
             getfeedback(getreply);
-            handleCancelNotification(change.doc.id);
+            // handleCancelNotification(change.doc.id);
           }
         }
       });
