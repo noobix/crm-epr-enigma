@@ -38,7 +38,6 @@ import {
 const FeedBackForm = (props) => {
   const [details, setdetails] = useState(false);
   const [feedlist, setfeedlist] = useState([]);
-  const [reduce, setreduce] = useState(0);
   const [name, setname] = useState(props.route.params.name);
   const [mesageinput, setmessageinput] = useState("");
   const [xheight, setxheight] = useState(50);
@@ -96,11 +95,11 @@ const FeedBackForm = (props) => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         showToast("Incoming message");
-        if (reduce > 1) {
-          if (change.type === "added") {
-            setfeedlist([]);
-            getFeedlist(getreply);
-            // handleCancelNotification(change.doc.id);
+        if (change.type === "added") {
+          setfeedlist([]);
+          getFeedlist(getreply);
+          if (isFocused) {
+            handleCancelNotification(change.doc.id);
           }
         }
       });
@@ -110,11 +109,10 @@ const FeedBackForm = (props) => {
     unsubscribe();
   }, []);
   useEffect(() => {
-    setreduce((reduce) => reduce + 1);
     setfeedlist([]);
     getFeedlist(getreply);
     if (props.route.params.notification === "unread") {
-      handleCancelNotification();
+      handleCancelNotification(props.route.params.noteId);
     }
   }, [isFocused]);
   const showToast = (message) => {
@@ -124,8 +122,8 @@ const FeedBackForm = (props) => {
       ToastAndroid.CENTER
     );
   };
-  const handleCancelNotification = async () => {
-    const notificationRef = doc(firestore, "status", props.route.params.noteId);
+  const handleCancelNotification = async (id) => {
+    const notificationRef = doc(firestore, "status", id);
     await updateDoc(notificationRef, { status: "read" });
   };
   async function getreply(id, feed) {
@@ -365,8 +363,12 @@ const FeedBackForm = (props) => {
             .reverse()
             .sort(
               (a, b) =>
-                new moment(new Date(a.fdate)).format("YYYYMMDD HHmmss") -
-                new moment(new Date(b.fdate)).format("YYYYMMDD HHmmss")
+                new moment(new Date(a.fdate).getTime()).format(
+                  "YYYYMMDD HHmmss"
+                ) <
+                new moment(new Date(b.fdate).getTime()).format(
+                  "YYYYMMDD HHmmss"
+                )
             )}
           keyExtractor={(item, index) => {
             return index;

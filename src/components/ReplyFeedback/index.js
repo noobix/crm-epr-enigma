@@ -37,7 +37,8 @@ import moment from "moment";
 const ReplyFeedback = (props) => {
   const [details, setdetails] = useState(false);
   const [dataset, setdataset] = useState([]);
-  const [reduce, setreduce] = useState(0);
+  const [reduce, setreduce] = useState([]);
+  const [duplicate, setduplicate] = useState([]);
   const [visible, setvisible] = useState(false);
   const [name, setname] = useState(props.route.params.doctor);
   const [messagereply, setmessagereply] = useState("");
@@ -46,10 +47,9 @@ const ReplyFeedback = (props) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   useEffect(() => {
-    setreduce((reduce) => reduce + 1);
     getfeedback(getreply);
     if (props.route.params.notification === "unread") {
-      handleCancelNotification();
+      handleCancelNotification(props.route.params.noteId);
     }
   }, [isFocused]);
   async function getreply(id, feed) {
@@ -107,12 +107,12 @@ const ReplyFeedback = (props) => {
   const unsubscribe = () => {
     onSnapshot(monitoring, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
-        if (reduce > 1) {
-          if (change.type === "added") {
-            showToast("Incoming message");
-            setdataset([]);
-            getfeedback(getreply);
-            // handleCancelNotification(change.doc.id);
+        showToast("Incoming message");
+        if (change.type === "added") {
+          setdataset([]);
+          getfeedback(getreply);
+          if (isFocused) {
+            handleCancelNotification(change.doc.id);
           }
         }
       });
@@ -150,8 +150,8 @@ const ReplyFeedback = (props) => {
       ToastAndroid.CENTER
     );
   };
-  const handleCancelNotification = async () => {
-    const notificationRef = doc(firestore, "status", props.route.params.noteId);
+  const handleCancelNotification = async (id) => {
+    const notificationRef = doc(firestore, "status", id);
     await updateDoc(notificationRef, { status: "read" });
   };
   const handelInputsubmit = useCallback(
@@ -441,7 +441,10 @@ const ReplyFeedback = (props) => {
                   color="rgb(47,79,79)"
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleCaseupdate()}>
+              <TouchableOpacity
+                style={{ marginLeft: 10 }}
+                onPress={() => handleCaseupdate()}
+              >
                 <AntDesign
                   name="closecircle"
                   style={{ marginRight: 16 }}
@@ -466,8 +469,12 @@ const ReplyFeedback = (props) => {
             .reverse()
             .sort(
               (a, b) =>
-                new moment(new Date(a.fdate)).format("YYYYMMDD HHmmss") -
-                new moment(new Date(b.fdate)).format("YYYYMMDD HHmmss")
+                new moment(new Date(a.fdate).getTime()).format(
+                  "YYYYMMDD HHmmss"
+                ) <
+                new moment(new Date(b.fdate).getTime()).format(
+                  "YYYYMMDD HHmmss"
+                )
             )}
           keyExtractor={(item, index) => {
             return index;

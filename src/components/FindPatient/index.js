@@ -516,6 +516,7 @@ const FindPatient = (props) => {
                   fontSize: 20,
                   fontWeight: "500",
                   letterSpacing: 2,
+                  borderRadius: 5,
                   borderColor: "rgb(109, 123, 175)",
                   backgroundColor: "rgb(230,230,250)",
                 }}
@@ -528,6 +529,7 @@ const FindPatient = (props) => {
                   width: "16%",
                   marginTop: 10,
                   alignItems: "center",
+                  borderRadius: 5,
                   backgroundColor: "rgb(109, 123, 175)",
                 }}
                 onPress={() => searchId()}
@@ -550,6 +552,7 @@ const FindPatient = (props) => {
                   marginTop: 10,
                   marginRight: 16,
                   alignItems: "center",
+                  borderRadius: 5,
                   backgroundColor: "rgb(109, 123, 175)",
                 }}
                 onPress={() => setadvsearch(true)}

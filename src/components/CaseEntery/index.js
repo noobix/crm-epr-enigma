@@ -168,7 +168,7 @@ const CaseList = (props) => {
   ) => (
     <TouchableOpacity
       key={index}
-      onPress={() =>
+      onPress={() => {
         props.navigation.navigate("replyfeedback", {
           status,
           diagnosis,
@@ -180,8 +180,8 @@ const CaseList = (props) => {
           noteId,
           doctor,
           uid,
-        })
-      }
+        });
+      }}
     >
       <View
         style={{
@@ -512,12 +512,12 @@ const CaseList = (props) => {
             <ScrollView>
               {dataset &&
                 dataset
-                  .sort((a, b) => a.status.localeCompare(b.status))
                   .sort(
                     (a, b) =>
-                      new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                      new moment(new Date(a.date)).format("YYYYMMDD HHmmss") <
                       new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
                   )
+                  .sort((a, b) => b.status.localeCompare(a.status))
                   .map(
                     (
                       {

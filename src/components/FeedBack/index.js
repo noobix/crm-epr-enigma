@@ -215,8 +215,8 @@ const FeedBack = (props) => {
               style={{
                 color: "rgb(255,255,255)",
                 backgroundColor: "rgb(255,69,0)",
-                fontSize: 22,
-                letterSpacing: 5,
+                fontSize: 20,
+                letterSpacing: 4,
               }}
             >
               {status}
@@ -245,12 +245,12 @@ const FeedBack = (props) => {
         <ScrollView>
           {dataset &&
             dataset
-              .sort((a, b) => a.status.localeCompare(b.status))
               .sort(
                 (a, b) =>
-                  new moment(new Date(a.date)).format("YYYYMMDD HHmmss") -
+                  new moment(new Date(a.date)).format("YYYYMMDD HHmmss") <
                   new moment(new Date(b.date)).format("YYYYMMDD HHmmss")
               )
+              .sort((a, b) => b.status.localeCompare(a.status))
               .map(
                 (
                   { casetype, date, doctor, status, id, notification, noteId },
