@@ -39,6 +39,13 @@ const Login = (props) => {
     const details = { email: email.trim().toLowerCase(), password: password };
     dispatch(signInUser(details));
   };
+  const verifyEmail = () => {
+    if (email === "") {
+      showToast("Please enter email");
+      return;
+    }
+    props.navigation.navigate("resetpassword", { email });
+  };
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -108,6 +115,7 @@ const Login = (props) => {
                   color: "rgb(29, 35, 102)",
                   fontSize: 18,
                 }}
+                onPress={() => verifyEmail()}
               >
                 redeem
               </Text>

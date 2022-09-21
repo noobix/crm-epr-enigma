@@ -12,6 +12,7 @@ import { NewsFeed } from "../components/NewsFeed";
 import { FeedBackForm } from "../components/FeedBackForm";
 import { ReplyFeedback } from "../components/ReplyFeedback";
 import { FetchNotification } from "../components/FetchNotification";
+import { ResetPassword } from "../components/ResetPassword";
 import { ReadFeed } from "../components/NewsFeedRead";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/authSlice";
@@ -85,6 +86,7 @@ const Router = () => {
     <NavigationContainer>
       <NativeStack.Navigator screenOptions={{ headerShown: false }}>
         <NativeStack.Screen name="home" children={authNav} />
+        <NativeStack.Screen name="resetpassword" component={ResetPassword} />
         <NativeStack.Screen name="profile" component={Profile} />
         <NativeStack.Screen name="newsfeed" component={NewsFeed} />
         <NativeStack.Screen name="findpatient" component={FindPatient} />

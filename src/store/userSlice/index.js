@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
@@ -52,6 +53,22 @@ export const signInUser = createAsyncThunk(
       dispatch(setUserType(userType));
       dispatch(userid(uid));
       dispatch(login(true));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+export const redeemPassword = createAsyncThunk(
+  "loginUser/redeemPassword",
+  async (email) => {
+    try {
+      const forgot = await sendPasswordResetEmail(auth, email, null)
+        .then((ib) => console.log(ib))
+        .catch((err) => {
+          showToast(err.message);
+        });
+      showToast("Reset email sent..If not in inbox check spam");
+      console.log(forgot);
     } catch (error) {
       console.log(error);
     }
